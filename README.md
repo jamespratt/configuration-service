@@ -40,6 +40,9 @@ public void ConfigureServices(IServiceCollection services)
         .AddRedisPublisher("localhost:6379");
 }
 ```
+The configured host will expose two API endpoints:
+* `configuration/list` - Lists all files at the configured provider.
+* `configuration/{filename}` - Retrieves the contents of the specified file.
 
 ## Adding the ConfigurationService Client
 The ConfigurationService client can be configured by adding `AddRemoteSource` to a new or existing configuration builder. In the following example, remote json configuration is added and a Redis endpoint is specified for configuration change subscription.  Local configuration can be read for settings for the remote source by using multiple `Build` instances of the configuration. 
