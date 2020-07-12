@@ -5,6 +5,7 @@
     <Version>0.1.0</Version>
     <Authors>James Pratt</Authors>
     <Product>ConfigurationService.Hosting</Product>
+    <Description>ConfigurationService is an externalized configuration service for .NET Core.</Description>
   </PropertyGroup>
 
   <ItemGroup>
