@@ -24,9 +24,9 @@ namespace ConfigurationService.Samples.Client
                 .AddConfiguration(configuration)
                 .AddRemoteSource(new RemoteConfigurationSource
                 {
-                    ConfigurationName = "test.json",
-                    ConfigurationServiceUri = "http://localhost:5000/configuration/",
-                    SubscriberConfiguration = "localhost:6379",
+                    ConfigurationName = configuration["ConfigurationName"],
+                    ConfigurationServiceUri = configuration["ConfigurationServiceUri"],
+                    SubscriberConfiguration = configuration["SubscriberConfiguration"],
                     Optional = false,
                     ReloadOnChange = true,
                     LoggerFactory = loggerFactory
