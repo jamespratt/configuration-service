@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Description>ConfigurationService is an remote configuration service for .NET Core.</Description>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Version>0.2.0</Version>
     <Authors>James Pratt</Authors>
-    <Product>ConfigurationService.Client</Product>
-    <Description>ConfigurationService is an remote configuration service for .NET Core.</Description>
+    <AssemblyName>ConfigurationService.Client</AssemblyName>
+    <PackageId>ConfigurationService.Client</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
