@@ -35,9 +35,11 @@ jobs:
       with:
           PROJECT_FILE_PATH: src/ConfigurationService.Hosting/ConfigurationService.Hosting.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+          TAG_COMMIT: false
 
     - name: Publish ConfigurationService.Client
       uses: brandedoutcast/publish-nuget@v2.5.2
       with:
           PROJECT_FILE_PATH: src/ConfigurationService.Client/ConfigurationService.Client.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+          TAG_COMMIT: false
