@@ -17,10 +17,17 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
+
+    - name: Install dependencies ConfigurationService.Hosting
+      run: dotnet restore src/ConfigurationService.Hosting/ConfigurationService.Hosting.csproj
+    - name: Install dependencies ConfigurationService.Client
+      run: dotnet restore src/ConfigurationService.Client/ConfigurationService.Client.csproj
+      
+    - name: Build ConfigurationService.Hosting
+      run: dotnet build src/ConfigurationService.Hosting/ConfigurationService.Hosting.csproj --configuration Release --no-restore
+    - name: Build ConfigurationService.Client
+      run: dotnet build src/ConfigurationService.Client/ConfigurationService.Client.csproj --configuration Release --no-restore
+
     - name: Publish ConfigurationService.Hosting
       uses: brandedoutcast/publish-nuget@v2.5.3
       with:
