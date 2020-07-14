@@ -2,11 +2,16 @@
 
 ## About ConfigurationService
 
-ConfigurationService is an externalized configuration service for .NET Core.  Configuration for fleets of applications, services, and containerized micro-services can be updated immediately without the need to redeploy or restart. ConfigurationService uses a client/server pub/sub architecture to notify subscribed clients of configuration changes as they happen.  Configuration can be injected using the standard options pattern with `IOptions`, `IOptionsMonitor` or `IOptionsSnapshot`.
+ConfigurationService is a remote configuration service for .NET Core.  Configuration for fleets of applications, services, and containerized micro-services can be updated immediately without the need to redeploy or restart. ConfigurationService uses a client/server pub/sub architecture to notify subscribed clients of configuration changes as they happen.  Configuration can be injected using the standard options pattern with `IOptions`, `IOptionsMonitor` or `IOptionsSnapshot`.
 
 Configuration service currently supports hosting configuration with git and Redis pub/sub.  Additional providers and publishers will be added in future releases.
 
 ## Installing with NuGet
+
+|  Package  |Latest Release|
+|:----------|:------------:|
+|**ConfigurationService.Hosting**|[![NuGet Badge ConfigurationService.Hosting](https://buildstats.info/nuget/ConfigurationService.Hosting)](https://www.nuget.org/packages/ConfigurationService.Hosting)
+|**ConfigurationService.Client**|[![NuGet Badge ConfigurationService.Client](https://buildstats.info/nuget/ConfigurationService.Client)](https://www.nuget.org/packages/ConfigurationService.Client)
 
 The easiest way to install ConfigurationService is with [NuGet](https://www.nuget.org/packages/ConfigurationService.Hosting/).
 
