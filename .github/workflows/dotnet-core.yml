@@ -20,21 +20,24 @@ jobs:
 
     - name: Install dependencies ConfigurationService.Hosting
       run: dotnet restore src/ConfigurationService.Hosting/ConfigurationService.Hosting.csproj
+
     - name: Install dependencies ConfigurationService.Client
       run: dotnet restore src/ConfigurationService.Client/ConfigurationService.Client.csproj
       
     - name: Build ConfigurationService.Hosting
       run: dotnet build src/ConfigurationService.Hosting/ConfigurationService.Hosting.csproj --configuration Release --no-restore
+
     - name: Build ConfigurationService.Client
       run: dotnet build src/ConfigurationService.Client/ConfigurationService.Client.csproj --configuration Release --no-restore
 
     - name: Publish ConfigurationService.Hosting
-      uses: brandedoutcast/publish-nuget@v2.5.3
+      uses: brandedoutcast/publish-nuget@v2.5.2
       with:
           PROJECT_FILE_PATH: src/ConfigurationService.Hosting/ConfigurationService.Hosting.csproj
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}    
-    - name: Publish ConfigurationService.Hosting
-      uses: brandedoutcast/publish-nuget@v2.5.3
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+
+    - name: Publish ConfigurationService.Client
+      uses: brandedoutcast/publish-nuget@v2.5.2
       with:
           PROJECT_FILE_PATH: src/ConfigurationService.Client/ConfigurationService.Client.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
