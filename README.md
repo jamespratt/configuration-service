@@ -1,6 +1,6 @@
 # ConfigurationService
 
-![.NET Core](https://github.com/jamespratt/configuration-service/workflows/.NET%20Core/badge.svg)
+![ConfigurationService](https://github.com/jamespratt/configuration-service/workflows/ConfigurationService/badge.svg)
 
 |  Package  |Latest Release|
 |:----------|:------------:|
