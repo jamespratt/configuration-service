@@ -37,12 +37,12 @@ public void ConfigureServices(IServiceCollection services)
     services.AddControllers();
 
     services.AddConfigurationService()
-        .AddGitProvider(new GitProviderOptions
+        .AddGitProvider(c =>
         {
-            RepositoryUrl = "https://example.com/my-repo/configuration.git",
-            Username = "username",
-            Password = "password",
-            LocalPath = "C:/config"
+            c.RepositoryUrl = "https://example.com/my-repo/configuration.git";
+            c.Username = "username";
+            c.Password = "password";
+            c.LocalPath = "C:/config";
         })
         .AddRedisPublisher("localhost:6379");
 }
