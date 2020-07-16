@@ -11,7 +11,7 @@
 
 ConfigurationService is a remote configuration service for .NET Core.  Configuration for fleets of applications, services, and containerized micro-services can be updated immediately without the need to redeploy or restart. ConfigurationService uses a client/server pub/sub architecture to notify subscribed clients of configuration changes as they happen.  Configuration can be injected using the standard options pattern with `IOptions`, `IOptionsMonitor` or `IOptionsSnapshot`.
 
-Configuration service currently supports hosting configuration with git and Redis pub/sub.  Additional providers and publishers will be added in future releases.
+Configuration service currently supports hosting configuration with either git or a file system and supports publishing changes with Redis pub/sub.
 
 ## Installing with NuGet
 
@@ -47,8 +47,21 @@ public void ConfigureServices(IServiceCollection services)
         .AddRedisPublisher("localhost:6379");
 }
 ```
+
+Optionally, a File System provider can also be used:
+```csharp
+    services.AddConfigurationService()
+        .AddFileSystemProvider(c => 
+        {
+            c.Path = "C:/config";
+            c.SearchPattern = "*.json";
+            c.IncludeSubdirectories = true;
+        })
+        ...
+```
+
 The configured host will expose two API endpoints:
-* `configuration/list` - Lists all files at the configured provider.
+* `configuration/` - Lists all files at the configured provider.
 * `configuration/{filename}` - Retrieves the contents of the specified file.
 
 ## Adding the ConfigurationService Client
