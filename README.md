@@ -68,9 +68,9 @@ configuration = new ConfigurationBuilder()
     .AddConfiguration(configuration)
     .AddRemoteSource(s => 
     {
-        s.ConfigurationName = configuration["ConfigurationName"];
-        s.ConfigurationServiceUri = configuration["ConfigurationServiceUri"];
-        s.SubscriberConfiguration = configuration["SubscriberConfiguration"];
+        s.ConfigurationName = "text.json";
+        s.ConfigurationServiceUri = "http://localhost:5000/configuration/";
+        s.SubscriberConfiguration = "localhost:6379";
         s.Optional = false;
         s.ReloadOnChange = true;
         s.LoggerFactory = loggerFactory;
