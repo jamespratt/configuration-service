@@ -7,7 +7,18 @@ namespace ConfigurationService.Client
 {
     public static class RemoteConfigurationExtensions
     {
-        public static IConfigurationBuilder AddRemoteSource(this IConfigurationBuilder builder, string configurationName, string configurationServiceUri, 
+        /// <summary>
+        /// Adds a remote configuration source.
+        /// </summary>
+        /// <param name="builder">The <see cref="IConfigurationBuilder"/> to add to.</param>
+        /// <param name="configurationName">Short name of the configuration file relative to the configuration provider.</param>
+        /// <param name="configurationServiceUri">Configuration service endpoint.</param>
+        /// <param name="subscriberConfiguration">Connection string for the subscriber.</param>
+        /// <param name="optional">Determines if loading the file is optional.</param>
+        /// <param name="reloadOnChange">Determines whether the source will be loaded if the underlying file changes.</param>
+        /// <param name="loggerFactory">The type used to configure the logging system and create instances of <see cref="ILogger"/>.</param>
+        /// <returns>The <see cref="IConfigurationBuilder"/>.</returns>
+        public static IConfigurationBuilder AddRemoteSource(this IConfigurationBuilder builder, string configurationName, string configurationServiceUri,
             string subscriberConfiguration = null, bool optional = false, bool reloadOnChange = false, ILoggerFactory loggerFactory = null)
         {
             if (builder == null)
@@ -30,33 +41,36 @@ namespace ConfigurationService.Client
                 throw new ArgumentNullException(nameof(subscriberConfiguration), $"Value cannot be null if {nameof(reloadOnChange)} is true.");
             }
 
-            var source = new RemoteConfigurationSource
+            return builder.AddRemoteSource(s => 
             {
-                ConfigurationServiceUri = configurationServiceUri,
-                ConfigurationName = configurationName,
-                Optional = optional,
-                ReloadOnChange = reloadOnChange,
-                SubscriberConfiguration = subscriberConfiguration,
-                LoggerFactory = loggerFactory ?? new NullLoggerFactory()
-            };
-
-            return builder.AddRemoteSource(source);
+                s.ConfigurationServiceUri = configurationServiceUri;
+                s.ConfigurationName = configurationName;
+                s.Optional = optional;
+                s.ReloadOnChange = reloadOnChange;
+                s.SubscriberConfiguration = subscriberConfiguration;
+                s.LoggerFactory = loggerFactory ?? new NullLoggerFactory();
+            });
         }
 
-        public static IConfigurationBuilder AddRemoteSource(this IConfigurationBuilder builder, RemoteConfigurationSource source)
+        /// <summary>
+        /// Adds a remote configuration source.
+        /// </summary>
+        /// <param name="builder">The <see cref="IConfigurationBuilder"/> to add to.</param>
+        /// <param name="configureSource">Configures the source.</param>
+        /// <returns></returns>
+        public static IConfigurationBuilder AddRemoteSource(this IConfigurationBuilder builder, Action<RemoteConfigurationSource> configureSource)
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            if (source == null)
+            if (configureSource == null)
             {
-                throw new ArgumentNullException(nameof(source));
+                throw new ArgumentNullException(nameof(configureSource));
             }
 
-            builder.Add(source);
-            return builder;
+            return builder.Add(configureSource);
         }
     }
 }

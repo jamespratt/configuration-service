@@ -10,6 +10,12 @@ namespace ConfigurationService.Hosting
 {
     public static class ConfigurationServiceBuilderExtensions
     {
+        /// <summary>
+        /// Adds services for configuration hosting to the specified <see cref="IServiceCollection"/>.
+        /// </summary>
+        /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
+        /// <returns>An <see cref="IConfigurationServiceBuilder"/> that can be used to further configure the 
+        /// ConfigurationService services.</returns>
         public static IConfigurationServiceBuilder AddConfigurationService(this IServiceCollection services)
         {
             if (services == null)
@@ -23,6 +29,13 @@ namespace ConfigurationService.Hosting
             return new ConfigurationServiceBuilder(services);
         }
 
+        /// <summary>
+        /// Add Git as the storage provider backend.
+        /// </summary>
+        /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
+        /// <param name="providerOptions">The git provider options.</param>
+        /// <returns>An <see cref="IConfigurationServiceBuilder"/> that can be used to further configure the 
+        /// ConfigurationService services.</returns>
         public static IConfigurationServiceBuilder AddGitProvider(this IConfigurationServiceBuilder builder, GitProviderOptions providerOptions)
         {
             if (builder == null)
@@ -40,6 +53,13 @@ namespace ConfigurationService.Hosting
             return builder;
         }
 
+        /// <summary>
+        /// Adds Redis as the configuration publisher.
+        /// </summary>
+        /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
+        /// <param name="configurationOptions">The configuration options for the Redis multiplexer.</param>
+        /// <returns>An <see cref="IConfigurationServiceBuilder"/> that can be used to further configure the 
+        /// ConfigurationService services.</returns>
         public static IConfigurationServiceBuilder AddRedisPublisher(this IConfigurationServiceBuilder builder, ConfigurationOptions configurationOptions)
         {
             if (builder == null)
@@ -57,6 +77,13 @@ namespace ConfigurationService.Hosting
             return builder;
         }
 
+        /// <summary>
+        /// Adds Redis as the configuration publisher.
+        /// </summary>
+        /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
+        /// <param name="configuration">The string configuration for the Redis multiplexer.</param>
+        /// <returns>An <see cref="IConfigurationServiceBuilder"/> that can be used to further configure the 
+        /// ConfigurationService services.</returns>
         public static IConfigurationServiceBuilder AddRedisPublisher(this IConfigurationServiceBuilder builder, string configuration)
         {
             if (builder == null)
