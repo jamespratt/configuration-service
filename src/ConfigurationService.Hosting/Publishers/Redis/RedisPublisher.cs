@@ -11,18 +11,6 @@ namespace ConfigurationService.Publishers.Redis
 
         private static IConnectionMultiplexer _connection;
 
-        public RedisPublisher(ILogger<RedisPublisher> logger, string configuration)
-        {
-            if (string.IsNullOrWhiteSpace(configuration))
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
-
-            _logger = logger;
-
-            _connection = ConnectionMultiplexer.Connect(configuration);
-        }
-
         public RedisPublisher(ILogger<RedisPublisher> logger, ConfigurationOptions configuration)
         {
             if (configuration == null)

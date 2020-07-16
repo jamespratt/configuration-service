@@ -33,22 +33,26 @@ namespace ConfigurationService.Hosting
         /// Add Git as the storage provider backend.
         /// </summary>
         /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
-        /// <param name="providerOptions">The git provider options.</param>
+        /// <param name="configure">Configure git provider options.</param>
         /// <returns>An <see cref="IConfigurationServiceBuilder"/> that can be used to further configure the 
         /// ConfigurationService services.</returns>
-        public static IConfigurationServiceBuilder AddGitProvider(this IConfigurationServiceBuilder builder, GitProviderOptions providerOptions)
+        public static IConfigurationServiceBuilder AddGitProvider(this IConfigurationServiceBuilder builder, Action<GitProviderOptions> configure)
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            if (providerOptions == null)
+            if (configure == null)
             {
-                throw new ArgumentNullException(nameof(providerOptions));
+                throw new ArgumentNullException(nameof(configure));
             }
 
-            builder.Services.AddSingleton<IProvider>(sp => ActivatorUtilities.CreateInstance<GitProvider>(sp, providerOptions));
+            var options = new GitProviderOptions();
+            configure(options);
+
+            builder.Services.AddSingleton(options);
+            builder.Services.AddSingleton<IProvider, GitProvider>();
 
             return builder;
         }
@@ -57,22 +61,26 @@ namespace ConfigurationService.Hosting
         /// Adds Redis as the configuration publisher.
         /// </summary>
         /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
-        /// <param name="configurationOptions">The configuration options for the Redis multiplexer.</param>
+        /// <param name="configure">Configure options for the Redis multiplexer.</param>
         /// <returns>An <see cref="IConfigurationServiceBuilder"/> that can be used to further configure the 
         /// ConfigurationService services.</returns>
-        public static IConfigurationServiceBuilder AddRedisPublisher(this IConfigurationServiceBuilder builder, ConfigurationOptions configurationOptions)
+        public static IConfigurationServiceBuilder AddRedisPublisher(this IConfigurationServiceBuilder builder, Action<ConfigurationOptions> configure)
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            if (configurationOptions == null)
+            if (configure == null)
             {
-                throw new ArgumentNullException(nameof(configurationOptions));
+                throw new ArgumentNullException(nameof(configure));
             }
 
-            builder.Services.AddSingleton<IPublisher>(sp => ActivatorUtilities.CreateInstance<RedisPublisher>(sp, configurationOptions));
+            var options = new ConfigurationOptions();
+            configure(options);
+
+            builder.Services.AddSingleton(options);
+            builder.Services.AddSingleton<IPublisher, RedisPublisher>();
 
             return builder;
         }
@@ -96,7 +104,10 @@ namespace ConfigurationService.Hosting
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            builder.Services.AddSingleton<IPublisher>(sp => ActivatorUtilities.CreateInstance<RedisPublisher>(sp, configuration));
+            var options = ConfigurationOptions.Parse(configuration);
+
+            builder.Services.AddSingleton(options);
+            builder.Services.AddSingleton<IPublisher, RedisPublisher>();
 
             return builder;
         }
