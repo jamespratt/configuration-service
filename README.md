@@ -47,6 +47,10 @@ public void ConfigureServices(IServiceCollection services)
         .AddRedisPublisher("localhost:6379");
 }
 ```
+The configured host will expose two API endpoints:
+* `configuration/` - Lists all files at the configured provider.
+* `configuration/{filename}` - Retrieves the contents of the specified file.
+
 #### Git Provider Options
 |  Property  | Description |
 |:-----------|:------------|
@@ -58,7 +62,28 @@ public void ConfigureServices(IServiceCollection services)
 |SearchPattern|The search string to use as a filter against the names of files.|
 |PollingInterval|The interval to check for for remote changes.|
 
-Optionally, a File System provider can also be used:
+```csharp
+    services.AddConfigurationService()
+        .AddGitProvider(c =>
+        {
+            c.RepositoryUrl = "https://example.com/my-repo/my-repo.git";
+            c.Username = "username";
+            c.Password = "password";
+            c.Branch = "master";
+            c.LocalPath = "C:/config";
+            c.SearchPattern = ".*json";
+            c.PollingInterval = TimeSpan.FromSeconds(60);
+        }
+        ...
+```
+
+#### File System Provider Options
+|  Property  | Description |
+|:-----------|:------------|
+|Path|Path to the configuration files.|
+|SearchPattern|The search string to use as a filter against the names of files.|
+|IncludeSubdirectories|Includes the current directory and all its subdirectories.|
+
 ```csharp
     services.AddConfigurationService()
         .AddFileSystemProvider(c => 
@@ -69,16 +94,6 @@ Optionally, a File System provider can also be used:
         })
         ...
 ```
-#### File System Provider Options
-|  Property  | Description |
-|:-----------|:------------|
-|Path|Path to the configuration files.|
-|SearchPattern|The search string to use as a filter against the names of files.|
-|IncludeSubdirectories|Includes the current directory and all its subdirectories.|
-
-The configured host will expose two API endpoints:
-* `configuration/` - Lists all files at the configured provider.
-* `configuration/{filename}` - Retrieves the contents of the specified file.
 
 ## Adding the ConfigurationService Client
 The ConfigurationService client can be configured by adding `AddRemoteSource` to a new or existing configuration builder. In the following example, remote json configuration is added and a Redis endpoint is specified for configuration change subscription.  Local configuration can be read for settings for the remote source by using multiple `Build` instances of the configuration. 
