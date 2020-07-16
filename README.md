@@ -1,6 +1,6 @@
 # ConfigurationService
 
-![ConfigurationService](https://github.com/jamespratt/configuration-service/workflows/ConfigurationService/badge.svg)
+[![Build](https://github.com/jamespratt/configuration-service/workflows/ConfigurationService/badge.svg)](https://github.com/jamespratt/configuration-service/actions?query=workflow%3AConfigurationService)
 
 |  Package  |Latest Release|
 |:----------|:------------:|
@@ -66,14 +66,14 @@ IConfiguration configuration = new ConfigurationBuilder()
 
 configuration = new ConfigurationBuilder()
     .AddConfiguration(configuration)
-    .AddRemoteSource(new RemoteConfigurationSource
+    .AddRemoteSource(s => 
     {
-        ConfigurationName = configuration["ConfigurationName"],
-        ConfigurationServiceUri = configuration["ConfigurationServiceUri"],
-        SubscriberConfiguration = configuration["SubscriberConfiguration"],
-        Optional = false,
-        ReloadOnChange = true,
-        LoggerFactory = loggerFactory
+        s.ConfigurationName = configuration["ConfigurationName"];
+        s.ConfigurationServiceUri = configuration["ConfigurationServiceUri"];
+        s.SubscriberConfiguration = configuration["SubscriberConfiguration"];
+        s.Optional = false;
+        s.ReloadOnChange = true;
+        s.LoggerFactory = loggerFactory;
     })
     .Build();
 ```
