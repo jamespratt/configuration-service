@@ -22,14 +22,14 @@ namespace ConfigurationService.Samples.Client
 
             configuration = new ConfigurationBuilder()
                 .AddConfiguration(configuration)
-                .AddRemoteSource(new RemoteConfigurationSource
+                .AddRemoteSource(s => 
                 {
-                    ConfigurationName = configuration["ConfigurationName"],
-                    ConfigurationServiceUri = configuration["ConfigurationServiceUri"],
-                    SubscriberConfiguration = configuration["SubscriberConfiguration"],
-                    Optional = false,
-                    ReloadOnChange = true,
-                    LoggerFactory = loggerFactory
+                    s.ConfigurationName = configuration["ConfigurationName"];
+                    s.ConfigurationServiceUri = configuration["ConfigurationServiceUri"];
+                    s.SubscriberConfiguration = configuration["SubscriberConfiguration"];
+                    s.Optional = false;
+                    s.ReloadOnChange = true;
+                    s.LoggerFactory = loggerFactory;
                 })
                 .Build();
 
