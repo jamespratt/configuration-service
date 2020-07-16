@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ConfigurationService.Hosting" Version="0.2.4" />
+    <PackageReference Include="ConfigurationService.Hosting" Version="0.2.5" />
   </ItemGroup>
 
 </Project>
