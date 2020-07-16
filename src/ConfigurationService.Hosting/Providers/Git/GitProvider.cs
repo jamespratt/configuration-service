@@ -16,40 +16,40 @@ namespace ConfigurationService.Providers.Git
     {
         private readonly ILogger<GitProvider> _logger;
 
-        private readonly GitProviderOptions _gitProviderOptions;
+        private readonly GitProviderOptions _providerOptions;
         private readonly CredentialsHandler _credentialsHandler;
 
         public string Name => "Git";
 
-        public GitProvider(ILogger<GitProvider> logger, GitProviderOptions gitProviderOptions)
+        public GitProvider(ILogger<GitProvider> logger, GitProviderOptions providerOptions)
         {
             _logger = logger;
-            _gitProviderOptions = gitProviderOptions;
+            _providerOptions = providerOptions;
 
-            if (string.IsNullOrWhiteSpace(_gitProviderOptions.LocalPath))
+            if (string.IsNullOrWhiteSpace(_providerOptions.LocalPath))
             {
-                throw new ArgumentNullException(nameof(_gitProviderOptions.LocalPath), $"{nameof(_gitProviderOptions.LocalPath)} cannot be NULL or empty.");
+                throw new ArgumentNullException(nameof(_providerOptions.LocalPath), $"{nameof(_providerOptions.LocalPath)} cannot be NULL or empty.");
             }
 
-            if (string.IsNullOrWhiteSpace(_gitProviderOptions.RepositoryUrl))
+            if (string.IsNullOrWhiteSpace(_providerOptions.RepositoryUrl))
             {
-                throw new ArgumentNullException(nameof(_gitProviderOptions.RepositoryUrl), $"{nameof(_gitProviderOptions.RepositoryUrl)} cannot be NULL or empty.");
+                throw new ArgumentNullException(nameof(_providerOptions.RepositoryUrl), $"{nameof(_providerOptions.RepositoryUrl)} cannot be NULL or empty.");
             }
 
-            if (string.IsNullOrWhiteSpace(_gitProviderOptions.Username))
+            if (string.IsNullOrWhiteSpace(_providerOptions.Username))
             {
-                throw new ArgumentNullException(nameof(_gitProviderOptions.Username), $"{nameof(_gitProviderOptions.Username)} cannot be NULL or empty.");
+                throw new ArgumentNullException(nameof(_providerOptions.Username), $"{nameof(_providerOptions.Username)} cannot be NULL or empty.");
             }
 
-            if (string.IsNullOrWhiteSpace(_gitProviderOptions.Password))
+            if (string.IsNullOrWhiteSpace(_providerOptions.Password))
             {
-                throw new ArgumentNullException(nameof(_gitProviderOptions.Password), $"{nameof(_gitProviderOptions.Password)} cannot be NULL or empty.");
+                throw new ArgumentNullException(nameof(_providerOptions.Password), $"{nameof(_providerOptions.Password)} cannot be NULL or empty.");
             }
 
             _credentialsHandler = (url, user, cred) => new UsernamePasswordCredentials
             {
-                Username = _gitProviderOptions.Username,
-                Password = _gitProviderOptions.Password
+                Username = _providerOptions.Username,
+                Password = _providerOptions.Password
             };
         }
 
@@ -74,6 +74,7 @@ namespace ConfigurationService.Providers.Git
 
                     if (files.Any())
                     {
+                        UpdateLocal();
                         await onChange(files);
                     }
                 }
@@ -82,53 +83,53 @@ namespace ConfigurationService.Providers.Git
                     _logger.LogError(ex, "An unhandled exception occurred while attempting to poll for changes");
                 }
 
-                var delayDate = DateTime.UtcNow.Add(_gitProviderOptions.PollingInterval);
+                var delayDate = DateTime.UtcNow.Add(_providerOptions.PollingInterval);
 
-                _logger.LogInformation("Next polling period will begin in {PollingInterval:c} at {delayDate}.", _gitProviderOptions.PollingInterval, delayDate);
+                _logger.LogInformation("Next polling period will begin in {PollingInterval:c} at {delayDate}.", _providerOptions.PollingInterval, delayDate);
 
-                await Task.Delay(_gitProviderOptions.PollingInterval, cancellationToken);
+                await Task.Delay(_providerOptions.PollingInterval, cancellationToken);
             }
         }
 
         public void Initialize()
         {
             _logger.LogInformation("Initializing {Name} provider with options {Options}.", Name, new {
-                _gitProviderOptions.RepositoryUrl,
-                _gitProviderOptions.LocalPath,
-                _gitProviderOptions.Branch,
-                _gitProviderOptions.PollingInterval,
-                _gitProviderOptions.SearchPattern
+                _providerOptions.RepositoryUrl,
+                _providerOptions.LocalPath,
+                _providerOptions.Branch,
+                _providerOptions.PollingInterval,
+                _providerOptions.SearchPattern
             });
 
-            if (Directory.Exists(_gitProviderOptions.LocalPath))
+            if (Directory.Exists(_providerOptions.LocalPath))
             {
-                _logger.LogInformation("A local repository already exists at {LocalPath}.", _gitProviderOptions.LocalPath);
+                _logger.LogInformation("A local repository already exists at {LocalPath}.", _providerOptions.LocalPath);
 
-                _logger.LogInformation("Deleting directory {LocalPath}.", _gitProviderOptions.LocalPath);
+                _logger.LogInformation("Deleting directory {LocalPath}.", _providerOptions.LocalPath);
 
-                DeleteDirectory(_gitProviderOptions.LocalPath);
+                DeleteDirectory(_providerOptions.LocalPath);
             }
 
-            if (!Directory.Exists(_gitProviderOptions.LocalPath))
+            if (!Directory.Exists(_providerOptions.LocalPath))
             {
-                _logger.LogInformation("Creating directory {LocalPath}.", _gitProviderOptions.LocalPath);
+                _logger.LogInformation("Creating directory {LocalPath}.", _providerOptions.LocalPath);
 
-                Directory.CreateDirectory(_gitProviderOptions.LocalPath);
+                Directory.CreateDirectory(_providerOptions.LocalPath);
             }
 
             var cloneOptions = new CloneOptions
             {
                 CredentialsProvider = _credentialsHandler,
-                BranchName = _gitProviderOptions.Branch
+                BranchName = _providerOptions.Branch
             };
 
-            _logger.LogInformation("Cloning git repository {RepositoryUrl} to {LocalPath}.", _gitProviderOptions.RepositoryUrl, _gitProviderOptions.LocalPath);
+            _logger.LogInformation("Cloning git repository {RepositoryUrl} to {LocalPath}.", _providerOptions.RepositoryUrl, _providerOptions.LocalPath);
 
-            var path = Repository.Clone(_gitProviderOptions.RepositoryUrl, _gitProviderOptions.LocalPath, cloneOptions);
+            var path = Repository.Clone(_providerOptions.RepositoryUrl, _providerOptions.LocalPath, cloneOptions);
 
             _logger.LogInformation("Repository cloned to {path}.", path);
 
-            using (var repo = new Repository(_gitProviderOptions.LocalPath))
+            using (var repo = new Repository(_providerOptions.LocalPath))
             {
                 var hash = repo.Head.Tip.Sha.Substring(0, 6);
 
@@ -138,7 +139,7 @@ namespace ConfigurationService.Providers.Git
 
         public byte[] GetFile(string fileName)
         {
-            string path = Path.Combine(_gitProviderOptions.LocalPath, fileName);
+            string path = Path.Combine(_providerOptions.LocalPath, fileName);
 
             if (!File.Exists(path))
             {
@@ -156,13 +157,45 @@ namespace ConfigurationService.Providers.Git
             return Hasher.CreateMD5Hash(bytes);
         }
 
-        public IEnumerable<string> ListChangedFiles()
+        public IEnumerable<string> ListAllFiles()
+        {
+            IList<string> files = new List<string>();
+
+            using (var repo = new Repository(_providerOptions.LocalPath))
+            {
+                _logger.LogInformation("Listing files in repository at {LocalPath}.", _providerOptions.LocalPath);
+
+                foreach (IndexEntry entry in repo.Index)
+                {
+                    if (_providerOptions.SearchPattern != null)
+                    {
+                        var match = WildcardMatch(entry.Path, _providerOptions.SearchPattern);
+
+                        if (match == false)
+                        {
+                            _logger.LogInformation("File {Path} does not match search pattern {SearchPattern}.",
+                                entry.Path, _providerOptions.SearchPattern);
+
+                            continue;
+                        }
+                    }
+
+                    files.Add(entry.Path);
+                }
+            }
+
+            _logger.LogInformation("{Count} files found.", files.Count);
+
+            return files;
+        }
+
+        private IEnumerable<string> ListChangedFiles()
         {
             Fetch();
 
             IList<string> files = new List<string>();
 
-            using (var repo = new Repository(_gitProviderOptions.LocalPath))
+            using (var repo = new Repository(_providerOptions.LocalPath))
             {
                 _logger.LogInformation("Checking for remote changes on {RemoteName}.", repo.Head.TrackedBranch.RemoteName);
 
@@ -172,14 +205,14 @@ namespace ConfigurationService.Providers.Git
                     {
                         _logger.LogInformation("File {Path} changed.", entry.Path);
 
-                        if (_gitProviderOptions.SearchPattern != null)
+                        if (_providerOptions.SearchPattern != null)
                         {
-                            var match = WildcardMatch(entry.Path, _gitProviderOptions.SearchPattern);
+                            var match = WildcardMatch(entry.Path, _providerOptions.SearchPattern);
 
                             if (match == false)
                             {
                                 _logger.LogInformation("File {Path} does not match search pattern {SearchPattern}.",
-                                    entry.Path, _gitProviderOptions.SearchPattern);
+                                    entry.Path, _providerOptions.SearchPattern);
 
                                 continue;
                             }
@@ -206,41 +239,9 @@ namespace ConfigurationService.Providers.Git
             return files;
         }
 
-        public IEnumerable<string> ListAllFiles()
+        private void UpdateLocal()
         {
-            IList<string> files = new List<string>();
-
-            using (var repo = new Repository(_gitProviderOptions.LocalPath))
-            {
-                _logger.LogInformation("Listing files in repository at {LocalPath}.", _gitProviderOptions.LocalPath);
-
-                foreach (IndexEntry entry in repo.Index)
-                {
-                    if (_gitProviderOptions.SearchPattern != null)
-                    {
-                        var match = WildcardMatch(entry.Path, _gitProviderOptions.SearchPattern);
-
-                        if (match == false)
-                        {
-                            _logger.LogInformation("File {Path} does not match search pattern {SearchPattern}.",
-                                entry.Path, _gitProviderOptions.SearchPattern);
-
-                            continue;
-                        }
-                    }
-
-                    files.Add(entry.Path);
-                }
-            }
-
-            _logger.LogInformation("{Count} files found.", files.Count);
-
-            return files;
-        }
-
-        public void Update()
-        {
-            using (var repo = new Repository(_gitProviderOptions.LocalPath))
+            using (var repo = new Repository(_providerOptions.LocalPath))
             {
                 var options = new PullOptions
                 {
@@ -268,7 +269,7 @@ namespace ConfigurationService.Providers.Git
             }
         }
 
-        public static void DeleteDirectory(string directory)
+        private static void DeleteDirectory(string directory)
         {
             foreach (var subdirectory in Directory.EnumerateDirectories(directory))
             {
@@ -290,7 +291,7 @@ namespace ConfigurationService.Providers.Git
 
         private void Fetch()
         {
-            using (var repo = new Repository(_gitProviderOptions.LocalPath))
+            using (var repo = new Repository(_providerOptions.LocalPath))
             {
                 FetchOptions options = new FetchOptions
                 {

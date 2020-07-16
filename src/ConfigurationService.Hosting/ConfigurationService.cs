@@ -50,8 +50,6 @@ namespace ConfigurationService.Hosting
 
             if (files.Any())
             {
-                _provider.Update();
-
                 await PublishChanges(files);
             }
         }

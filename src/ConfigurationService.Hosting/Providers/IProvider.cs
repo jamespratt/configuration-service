@@ -17,10 +17,6 @@ namespace ConfigurationService.Providers
 
         string GetHash(string fileName);
 
-        IEnumerable<string> ListChangedFiles();
-
         IEnumerable<string> ListAllFiles();
-
-        void Update();
     }
 }
