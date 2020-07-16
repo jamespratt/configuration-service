@@ -47,6 +47,16 @@ public void ConfigureServices(IServiceCollection services)
         .AddRedisPublisher("localhost:6379");
 }
 ```
+#### Git Provider Options
+|  Property  | Description |
+|:-----------|:------------|
+|RepositoryUrl|URI for the remote repository.|
+|Username|Username for authentication.|
+|Password|Password for authentication.|
+|Branch|The name of the branch to checkout. When unspecified the remote's default branch will be used instead.|
+|LocalPath|Local path to clone into.|
+|SearchPattern|The search string to use as a filter against the names of files.|
+|PollingInterval|The interval to check for for remote changes.|
 
 Optionally, a File System provider can also be used:
 ```csharp
@@ -59,6 +69,12 @@ Optionally, a File System provider can also be used:
         })
         ...
 ```
+#### File System Provider Options
+|  Property  | Description |
+|:-----------|:------------|
+|Path|Path to the configuration files.|
+|SearchPattern|The search string to use as a filter against the names of files.|
+|IncludeSubdirectories|Includes the current directory and all its subdirectories.|
 
 The configured host will expose two API endpoints:
 * `configuration/` - Lists all files at the configured provider.
