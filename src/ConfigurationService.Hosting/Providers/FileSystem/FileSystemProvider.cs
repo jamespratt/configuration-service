@@ -82,7 +82,7 @@ namespace ConfigurationService.Providers.Git
             _logger.LogInformation("Listing files at {Path}.", _providerOptions.Path);
 
             var searchOption = _providerOptions.IncludeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-            var files = Directory.EnumerateFiles(_providerOptions.Path, _providerOptions.SearchPattern, searchOption);
+            var files = Directory.EnumerateFiles(_providerOptions.Path, _providerOptions.SearchPattern ?? "*", searchOption);
             files = files.Select(file => GetRelativePath(file)).ToList();
 
             _logger.LogInformation("{Count} files found.", files.Count());
