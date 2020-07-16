@@ -58,6 +58,34 @@ namespace ConfigurationService.Hosting
         }
 
         /// <summary>
+        /// Add file system as the storage provider backend.
+        /// </summary>
+        /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
+        /// <param name="configure">Configure file system provider options.</param>
+        /// <returns>An <see cref="IConfigurationServiceBuilder"/> that can be used to further configure the 
+        /// ConfigurationService services.</returns>
+        public static IConfigurationServiceBuilder AddFileSystemProvider(this IConfigurationServiceBuilder builder, Action<FileSystemProviderOptions> configure)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (configure == null)
+            {
+                throw new ArgumentNullException(nameof(configure));
+            }
+
+            var options = new FileSystemProviderOptions();
+            configure(options);
+
+            builder.Services.AddSingleton(options);
+            builder.Services.AddSingleton<IProvider, FileSystemProvider>();
+
+            return builder;
+        }
+
+        /// <summary>
         /// Adds Redis as the configuration publisher.
         /// </summary>
         /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
