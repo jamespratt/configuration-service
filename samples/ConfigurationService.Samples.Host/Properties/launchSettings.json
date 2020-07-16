@@ -4,7 +4,7 @@
     "ConfigurationService.Samples.Host": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "configuration/list",
+      "launchUrl": "configuration",
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
