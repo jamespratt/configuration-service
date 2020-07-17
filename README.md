@@ -122,5 +122,20 @@ configuration = new ConfigurationBuilder()
     .Build();
 ```
 
+#### Configuration Soruce Options
+|  Property  | Description |
+|:-----------|:------------|
+|RepositoryUrl|URI for the remote repository.|
+|ConfigurationName|Short name of the configuration file relative to the configuration provider.|
+|ConfigurationServiceUri|Configuration service endpoint.|
+|SubscriberConfiguration|Connection string for the subscriber.|
+|Optional|Determines if loading the file is optional.|
+|ReloadOnChange|Determines whether the source will be loaded if the underlying file changes.|
+|HttpMessageHandler|The optional `HttpMessageHandler` for the `HttpClient`.|
+|RequestTimeout|The timeout for the `HttpClient` request to the configuration server.|
+|Parser|The type used to parse the remote configuration file. The client will attempt to resolve this from the file extension if not specified. Supported Types: `JsonConfigurationFileParser`, `YamlConfigurationFileParser`, `XmlConfigurationFileParser`, `IniConfigurationFileParser`|
+|Subscriber|The type used to subscribe to published configuration messages. Defaults to RedisSubscriber if ReloadOnChange is enabled.|
+|LoggerFactory|The type used to configure the logging system and create instances of `ILogger`.|
+
 ## Samples
 Samples of both host and client implementations can be viewed at [Samples](https://github.com/jamespratt/configuration-service/tree/master/samples).
