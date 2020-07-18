@@ -134,7 +134,7 @@ configuration = new ConfigurationBuilder()
 |RequestTimeout|The timeout for the `HttpClient` request to the configuration server. Defaults to 60 seconds.|
 |Parser|The type used to parse the remote configuration file. The client will attempt to resolve this from the file extension of `ConfigurationName` if not specified.<br /><br />Supported Types: <ul><li>`JsonConfigurationFileParser`</li><li>`YamlConfigurationFileParser`</li><li>`XmlConfigurationFileParser`</li><li>`IniConfigurationFileParser`</li></ul>|
 |Subscriber|The type used to subscribe to published configuration messages. Defaults to RedisSubscriber if ReloadOnChange is enabled.|
-|LoggerFactory|The type used to configure the logging system and create instances of `ILogger`.|
+|LoggerFactory|The type used to configure the logging system and create instances of `ILogger`. Defaults to `NullLoggerFactory`.|
 
 ## Samples
 Samples of both host and client implementations can be viewed at [Samples](https://github.com/jamespratt/configuration-service/tree/master/samples).
