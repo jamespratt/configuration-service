@@ -11,7 +11,7 @@ namespace ConfigurationService.Providers.Git
 {
     public class FileSystemProvider : IProvider
     {
-        private readonly ILogger<GitProvider> _logger;
+        private readonly ILogger<FileSystemProvider> _logger;
 
         private readonly FileSystemProviderOptions _providerOptions;
         private FileSystemWatcher _fileSystemWatcher;
@@ -19,7 +19,7 @@ namespace ConfigurationService.Providers.Git
 
         public string Name => "File System";
 
-        public FileSystemProvider(ILogger<GitProvider> logger, FileSystemProviderOptions providerOptions)
+        public FileSystemProvider(ILogger<FileSystemProvider> logger, FileSystemProviderOptions providerOptions)
         {
             _logger = logger;
             _providerOptions = providerOptions;
