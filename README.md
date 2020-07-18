@@ -63,18 +63,18 @@ The configured host will expose two API endpoints:
 |PollingInterval|The interval to check for remote changes. Defaults to 60 seconds.|
 
 ```csharp
-    services.AddConfigurationService()
-        .AddGitProvider(c =>
-        {
-            c.RepositoryUrl = "https://example.com/my-repo/my-repo.git";
-            c.Username = "username";
-            c.Password = "password";
-            c.Branch = "master";
-            c.LocalPath = "C:/config";
-            c.SearchPattern = ".*json";
-            c.PollingInterval = TimeSpan.FromSeconds(60);
-        }
-        ...
+services.AddConfigurationService()
+    .AddGitProvider(c =>
+    {
+        c.RepositoryUrl = "https://example.com/my-repo/my-repo.git";
+        c.Username = "username";
+        c.Password = "password";
+        c.Branch = "master";
+        c.LocalPath = "C:/config";
+        c.SearchPattern = ".*json";
+        c.PollingInterval = TimeSpan.FromSeconds(60);
+    }
+    ...
 ```
 
 #### File System Provider Options
@@ -85,14 +85,14 @@ The configured host will expose two API endpoints:
 |IncludeSubdirectories|Includes the current directory and all its subdirectories. Defaults to `false`.|
 
 ```csharp
-    services.AddConfigurationService()
-        .AddFileSystemProvider(c => 
-        {
-            c.Path = "C:/config";
-            c.SearchPattern = "*.json";
-            c.IncludeSubdirectories = true;
-        })
-        ...
+services.AddConfigurationService()
+    .AddFileSystemProvider(c => 
+    {
+        c.Path = "C:/config";
+        c.SearchPattern = "*.json";
+        c.IncludeSubdirectories = true;
+    })
+    ...
 ```
 
 ## Adding the ConfigurationService Client
