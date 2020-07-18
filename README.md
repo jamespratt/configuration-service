@@ -20,7 +20,7 @@ The easiest way to install ConfigurationService is with [NuGet](https://www.nuge
 In Visual Studio's [Package Manager Console](http://docs.nuget.org/docs/start-here/using-the-package-manager-console),
 enter the following command:
 
-Hosting:
+Server:
 
     Install-Package ConfigurationService.Hosting
     
