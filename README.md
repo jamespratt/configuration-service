@@ -59,8 +59,8 @@ The configured host will expose two API endpoints:
 |Password|Password for authentication.|
 |Branch|The name of the branch to checkout. When unspecified the remote's default branch will be used instead.|
 |LocalPath|Local path to clone into.|
-|SearchPattern|The search string to use as a filter against the names of files.|
-|PollingInterval|The interval to check for for remote changes.|
+|SearchPattern|The search string to use as a filter against the names of files. Defaults to `*`.|
+|PollingInterval|The interval to check for remote changes. Defaults to 60 seconds.|
 
 ```csharp
     services.AddConfigurationService()
@@ -81,8 +81,8 @@ The configured host will expose two API endpoints:
 |  Property  | Description |
 |:-----------|:------------|
 |Path|Path to the configuration files.|
-|SearchPattern|The search string to use as a filter against the names of files.|
-|IncludeSubdirectories|Includes the current directory and all its subdirectories.|
+|SearchPattern|The search string to use as a filter against the names of files. Defaults to `*`.|
+|IncludeSubdirectories|Includes the current directory and all its subdirectories. Defaults to `false`.|
 
 ```csharp
     services.AddConfigurationService()
@@ -128,11 +128,11 @@ configuration = new ConfigurationBuilder()
 |RepositoryUrl|URI for the remote repository.|
 |ConfigurationName|Short name of the configuration file relative to the configuration provider.|
 |ConfigurationServiceUri|Configuration service endpoint.|
-|SubscriberConfiguration|Connection string for the subscriber.|
+|SubscriberConfiguration|Connection string for the subscriber. This is required if `ReloadOnChange` is `true`.|
 |Optional|Determines if loading the file is optional.|
 |ReloadOnChange|Determines whether the source will be loaded if the underlying file changes.|
 |HttpMessageHandler|The optional `HttpMessageHandler` for the `HttpClient`.|
-|RequestTimeout|The timeout for the `HttpClient` request to the configuration server.|
+|RequestTimeout|The timeout for the `HttpClient` request to the configuration server. Defaults to 60 seconds.|
 |Parser|The type used to parse the remote configuration file. The client will attempt to resolve this from the file extension if not specified.<br />Supported Types: <ul><li>`JsonConfigurationFileParser`</li><li>`YamlConfigurationFileParser`</li><li>`XmlConfigurationFileParser`</li><li>`IniConfigurationFileParser`</li></ul>|
 |Subscriber|The type used to subscribe to published configuration messages. Defaults to RedisSubscriber if ReloadOnChange is enabled.|
 |LoggerFactory|The type used to configure the logging system and create instances of `ILogger`.|
