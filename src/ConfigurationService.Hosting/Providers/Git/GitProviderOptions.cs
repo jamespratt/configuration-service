@@ -33,12 +33,12 @@ namespace ConfigurationService.Providers.Git
         public string LocalPath { get; set; }
 
         /// <summary>
-        /// The search string to use as a filter against the names of files.
+        /// The search string to use as a filter against the names of files. Defaults to all files ('*').
         /// </summary>
         public string SearchPattern { get; set; }
 
         /// <summary>
-        /// The interval to check for for remote changes.
+        /// The interval to check for for remote changes. Defaults to 60 seconds.
         /// </summary>
         public TimeSpan PollingInterval { get; set; } = TimeSpan.FromSeconds(60);
     }

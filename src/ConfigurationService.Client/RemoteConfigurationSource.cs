@@ -11,7 +11,7 @@ namespace ConfigurationService.Client
     public class RemoteConfigurationSource : IConfigurationSource
     {
         /// <summary>
-        /// Short name of the configuration file relative to the configuration provider.
+        /// Name or path of the configuration file relative to the configuration provider path.
         /// </summary>
         public string ConfigurationName { get; set; }
 
@@ -26,12 +26,12 @@ namespace ConfigurationService.Client
         public string SubscriberConfiguration { get; set; }
 
         /// <summary>
-        /// Determines if loading the file is optional.
+        /// Determines if loading the file is optional. Defaults to false>.
         /// </summary>
         public bool Optional { get; set; }
 
         /// <summary>
-        /// Determines whether the source will be loaded if the underlying file changes.
+        /// Determines whether the source will be loaded if the underlying file changes. Defaults to false.
         /// </summary>
         public bool ReloadOnChange { get; set; }
 
@@ -46,12 +46,12 @@ namespace ConfigurationService.Client
         public TimeSpan RequestTimeout { get; set; } = TimeSpan.FromSeconds(60);
 
         /// <summary>
-        /// The type used to parse the remote configuration file.
+        /// The type of <see cref="IConfigurationParser"/> used to parse the remote configuration file.
         /// </summary>
         public IConfigurationParser Parser { get; set; }
 
         /// <summary>
-        /// The type used to subscribe to published configuration messages.
+        /// The type of <see cref="ISubscriber"/> used to subscribe to published configuration messages.
         /// </summary>
         public ISubscriber Subscriber { get; set; }
 

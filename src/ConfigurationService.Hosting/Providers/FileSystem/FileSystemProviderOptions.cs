@@ -11,7 +11,7 @@
         public string Path { get; set; }
 
         /// <summary>
-        /// The search string to use as a filter against the names of files.
+        /// The search string to use as a filter against the names of files. Defaults to all files ('*').
         /// </summary>
         public string SearchPattern { get; set; }
 
