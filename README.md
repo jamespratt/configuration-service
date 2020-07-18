@@ -125,7 +125,6 @@ configuration = new ConfigurationBuilder()
 #### Configuration Soruce Options
 |  Property  | Description |
 |:-----------|:------------|
-|RepositoryUrl|URI for the remote repository.|
 |ConfigurationName|Short name of the configuration file relative to the configuration provider.|
 |ConfigurationServiceUri|Configuration service endpoint.|
 |SubscriberConfiguration|Connection string for the subscriber. This is required if `ReloadOnChange` is `true`.|
@@ -133,7 +132,7 @@ configuration = new ConfigurationBuilder()
 |ReloadOnChange|Determines whether the source will be loaded if the underlying file changes.|
 |HttpMessageHandler|The optional `HttpMessageHandler` for the `HttpClient`.|
 |RequestTimeout|The timeout for the `HttpClient` request to the configuration server. Defaults to 60 seconds.|
-|Parser|The type used to parse the remote configuration file. The client will attempt to resolve this from the file extension if not specified.<br /><br />Supported Types: <ul><li>`JsonConfigurationFileParser`</li><li>`YamlConfigurationFileParser`</li><li>`XmlConfigurationFileParser`</li><li>`IniConfigurationFileParser`</li></ul>|
+|Parser|The type used to parse the remote configuration file. The client will attempt to resolve this from the file extension of `ConfigurationName` if not specified.<br /><br />Supported Types: <ul><li>`JsonConfigurationFileParser`</li><li>`YamlConfigurationFileParser`</li><li>`XmlConfigurationFileParser`</li><li>`IniConfigurationFileParser`</li></ul>|
 |Subscriber|The type used to subscribe to published configuration messages. Defaults to RedisSubscriber if ReloadOnChange is enabled.|
 |LoggerFactory|The type used to configure the logging system and create instances of `ILogger`.|
 
