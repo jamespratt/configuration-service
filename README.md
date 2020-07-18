@@ -1,4 +1,4 @@
-# ConfigurationService
+# Configuration Service
 
 [![Build](https://github.com/jamespratt/configuration-service/workflows/ConfigurationService/badge.svg)](https://github.com/jamespratt/configuration-service/actions?query=workflow%3AConfigurationService)
 
@@ -7,9 +7,9 @@
 |**ConfigurationService.Hosting**|[![NuGet Badge ConfigurationService.Hosting](https://buildstats.info/nuget/ConfigurationService.Hosting)](https://www.nuget.org/packages/ConfigurationService.Hosting)
 |**ConfigurationService.Client**|[![NuGet Badge ConfigurationService.Client](https://buildstats.info/nuget/ConfigurationService.Client)](https://www.nuget.org/packages/ConfigurationService.Client)
 
-## About ConfigurationService
+## About Configuration Service
 
-ConfigurationService is a remote configuration service for .NET Core.  Configuration for fleets of applications, services, and containerized micro-services can be updated immediately without the need to redeploy or restart. ConfigurationService uses a client/server pub/sub architecture to notify subscribed clients of configuration changes as they happen.  Configuration can be injected using the standard options pattern with `IOptions`, `IOptionsMonitor` or `IOptionsSnapshot`.
+Configuration FService is a remote configuration service for .NET Core.  Configuration for fleets of applications, services, and containerized micro-services can be updated immediately without the need to redeploy or restart. Configuration Service uses a client/server pub/sub architecture to notify subscribed clients of configuration changes as they happen.  Configuration can be injected using the standard options pattern with `IOptions`, `IOptionsMonitor` or `IOptionsSnapshot`.
 
 Configuration service currently supports hosting configuration with either git or a file system and supports publishing changes with Redis pub/sub.  File types supported are .json, .yaml, .xml and .ini.
 
@@ -17,7 +17,7 @@ Configuration service currently supports hosting configuration with either git o
 
 ## Installing with NuGet
 
-The easiest way to install ConfigurationService is with [NuGet](https://www.nuget.org/packages/ConfigurationService.Hosting/).
+The easiest way to install Configuration Service is with [NuGet](https://www.nuget.org/packages/ConfigurationService.Hosting/).
 
 In Visual Studio's [Package Manager Console](http://docs.nuget.org/docs/start-here/using-the-package-manager-console),
 enter the following command:
@@ -30,8 +30,8 @@ Client:
 
     Install-Package ConfigurationService.Client
     
-## Adding the ConfigurationService Host
-The ConfigurationService host middleware can be added to the service collection of an existing ASP.NET Core application.  The following example configures a git storage provider with a Redis publisher.
+## Adding the Configuration Service Host
+The Configuration Service host middleware can be added to the service collection of an existing ASP.NET Core application.  The following example configures a git storage provider with a Redis publisher.
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
@@ -97,8 +97,8 @@ services.AddConfigurationService()
     ...
 ```
 
-## Adding the ConfigurationService Client
-The ConfigurationService client can be configured by adding `AddRemoteSource` to the standard configuration builder. In the following example, remote json configuration is added and a Redis endpoint is specified for configuration change subscription.  Local configuration can be read for settings for the remote source by using multiple instances of the configuration. 
+## Adding the Configuration Service Client
+The Configuration Service client can be configured by adding `AddRemoteSource` to the standard configuration builder. In the following example, remote json configuration is added and a Redis endpoint is specified for configuration change subscription.  Local configuration can be read for settings for the remote source by using multiple instances of the configuration. 
 
 ```csharp
 var loggerFactory = LoggerFactory.Create(builder =>
