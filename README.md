@@ -9,9 +9,9 @@
 
 ## About Configuration Service
 
-Configuration FService is a remote configuration service for .NET Core.  Configuration for fleets of applications, services, and containerized micro-services can be updated immediately without the need to redeploy or restart. Configuration Service uses a client/server pub/sub architecture to notify subscribed clients of configuration changes as they happen.  Configuration can be injected using the standard options pattern with `IOptions`, `IOptionsMonitor` or `IOptionsSnapshot`.
+Configuration Service is a remote configuration service for .NET Core.  Configuration for fleets of applications, services, and containerized micro-services can be updated immediately without the need to redeploy or restart. Configuration Service uses a client/server pub/sub architecture to notify subscribed clients of configuration changes as they happen.  Configuration can be injected using the standard options pattern with `IOptions`, `IOptionsMonitor` or `IOptionsSnapshot`.
 
-Configuration service currently supports hosting configuration with either git or a file system and supports publishing changes with Redis pub/sub.  File types supported are .json, .yaml, .xml and .ini.
+Configuration Service currently supports hosting configuration with either git or a file system and supports publishing changes with Redis pub/sub.  File types supported are .json, .yaml, .xml and .ini.
 
 <img src="https://github.com/jamespratt/configuration-service/blob/master/images/Configuration%20Service.png" height="300" alt="Configuration Service Diagram">
 
