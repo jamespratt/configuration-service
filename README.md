@@ -96,7 +96,7 @@ The configured host will expose two API endpoints:
 ```
 
 ## Adding the ConfigurationService Client
-The ConfigurationService client can be configured by adding `AddRemoteSource` to a new or existing configuration builder. In the following example, remote json configuration is added and a Redis endpoint is specified for configuration change subscription.  Local configuration can be read for settings for the remote source by using multiple `Build` instances of the configuration. 
+The ConfigurationService client can be configured by adding `AddRemoteSource` to the standard configuration builder. In the following example, remote json configuration is added and a Redis endpoint is specified for configuration change subscription.  Local configuration can be read for settings for the remote source by using multiple instances of the configuration. 
 
 ```csharp
 var loggerFactory = LoggerFactory.Create(builder =>
