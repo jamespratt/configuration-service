@@ -16,6 +16,15 @@ Configuration Service currently supports hosting configuration with either git o
 
 ![Configuration Service Diagram](https://github.com/jamespratt/configuration-service/blob/master/images/configuration-service.png)
 
+## Features
+* RESTful HTTP based API for external configuration.
+* Server easily integrates into an ASP.NET Core application.
+* Client easily integrates into any .NET Standard 2.0 application using the standard `ConfigurationBuilder` pattern.
+* Client encapsulates real-time configuration updates.
+* Support for git and file system based storage.
+* Support for .json, .yaml, .xml and .ini configuration files.
+* Inject configuration with `IOptionsMonitor` or `IOptionsSnapshot` to access configuration changes.
+
 ## Installing with NuGet
 
 The easiest way to install Configuration Service is with [NuGet](https://www.nuget.org/packages/ConfigurationService.Hosting/).
