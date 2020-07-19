@@ -30,6 +30,9 @@ jobs:
     - name: Build ConfigurationService.Client
       run: dotnet build src/ConfigurationService.Client/ConfigurationService.Client.csproj --configuration Release --no-restore
 
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+
     - name: Publish ConfigurationService.Hosting
       uses: brandedoutcast/publish-nuget@v2.5.2
       with:
