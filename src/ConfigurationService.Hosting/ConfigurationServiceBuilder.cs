@@ -9,12 +9,7 @@ namespace ConfigurationService.Hosting
 
         public ConfigurationServiceBuilder(IServiceCollection services)
         {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-
-            Services = services;
+            Services = services ?? throw new ArgumentNullException(nameof(services));
         }
     }
 }

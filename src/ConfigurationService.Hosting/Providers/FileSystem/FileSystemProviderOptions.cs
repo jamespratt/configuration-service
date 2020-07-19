@@ -1,4 +1,4 @@
-﻿namespace ConfigurationService.Providers.Git
+﻿namespace ConfigurationService.Hosting.Providers.FileSystem
 {
     /// <summary>
     /// Options for <see cref="FileSystemProvider"/>.

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace ConfigurationService.Publishers
+namespace ConfigurationService.Hosting.Publishers
 {
     public interface IPublisher
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ConfigurationService.Providers.Git
+namespace ConfigurationService.Hosting.Providers.Git
 {
     /// <summary>
     /// Options for <see cref="GitProvider"/>.

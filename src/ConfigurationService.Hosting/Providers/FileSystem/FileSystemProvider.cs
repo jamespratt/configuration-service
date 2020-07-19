@@ -4,10 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ConfigurationService.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace ConfigurationService.Providers.Git
+namespace ConfigurationService.Hosting.Providers.FileSystem
 {
     public class FileSystemProvider : IProvider
     {
@@ -46,12 +45,14 @@ namespace ConfigurationService.Providers.Git
                 _providerOptions.IncludeSubdirectories
             });
 
-            _fileSystemWatcher = new FileSystemWatcher();
-            _fileSystemWatcher.Path = _providerOptions.Path;
-            _fileSystemWatcher.Filter = _providerOptions.SearchPattern;
-            _fileSystemWatcher.IncludeSubdirectories = _providerOptions.IncludeSubdirectories;
+            _fileSystemWatcher = new FileSystemWatcher
+            {
+                Path = _providerOptions.Path,
+                Filter = _providerOptions.SearchPattern,
+                IncludeSubdirectories = _providerOptions.IncludeSubdirectories,
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName
+            };
 
-            _fileSystemWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
 
             _fileSystemWatcher.Created += FileSystemWatcher_Changed;
             _fileSystemWatcher.Changed += FileSystemWatcher_Changed;
@@ -82,17 +83,17 @@ namespace ConfigurationService.Providers.Git
             _logger.LogInformation("Listing files at {Path}.", _providerOptions.Path);
 
             var searchOption = _providerOptions.IncludeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-            var files = Directory.EnumerateFiles(_providerOptions.Path, _providerOptions.SearchPattern ?? "*", searchOption);
-            files = files.Select(file => GetRelativePath(file)).ToList();
+            var files = Directory.EnumerateFiles(_providerOptions.Path, _providerOptions.SearchPattern ?? "*", searchOption).ToList();
+            files = files.Select(GetRelativePath).ToList();
 
-            _logger.LogInformation("{Count} files found.", files.Count());
+            _logger.LogInformation("{Count} files found.", files.Count);
 
             return files;
         }
 
         private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            _logger.LogInformation("Detected file chnage at {FullPath}.", e.FullPath);
+            _logger.LogInformation("Detected file change at {FullPath}.", e.FullPath);
 
             var filename = GetRelativePath(e.FullPath);
             _onChange(new[] { filename });

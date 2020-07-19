@@ -22,6 +22,11 @@ namespace ConfigurationService.Client.Parsers
                 while (reader.Peek() != -1)
                 {
                     var rawLine = reader.ReadLine();
+                    if (rawLine == null)
+                    {
+                        continue;
+                    }
+
                     var line = rawLine.Trim();
 
                     if (string.IsNullOrWhiteSpace(line))

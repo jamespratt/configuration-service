@@ -5,12 +5,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using ConfigurationService.Hosting;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
 using Microsoft.Extensions.Logging;
 
-namespace ConfigurationService.Providers.Git
+namespace ConfigurationService.Hosting.Providers.Git
 {
     public class GitProvider : IProvider
     {

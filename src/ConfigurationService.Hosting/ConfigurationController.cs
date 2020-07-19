@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using ConfigurationService.Hosting.Providers;
 using Microsoft.AspNetCore.Mvc;
-using ConfigurationService.Providers;
 
 namespace ConfigurationService.Hosting
 {

@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ConfigurationService.Hosting.Providers;
+using ConfigurationService.Hosting.Publishers;
 using Microsoft.Extensions.Logging;
-using ConfigurationService.Providers;
-using ConfigurationService.Publishers;
 
 namespace ConfigurationService.Hosting
 {

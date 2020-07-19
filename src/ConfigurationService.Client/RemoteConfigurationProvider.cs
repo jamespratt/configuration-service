@@ -55,7 +55,6 @@ namespace ConfigurationService.Client
                     case ".yaml":
                         _parser = new YamlConfigurationFileParser();
                         break;
-                    case ".json":
                     default:
                         _parser = new JsonConfigurationFileParser();
                         break;

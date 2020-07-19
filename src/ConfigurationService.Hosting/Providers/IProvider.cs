@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ConfigurationService.Providers
+namespace ConfigurationService.Hosting.Providers
 {
     public interface IProvider
     {
