@@ -13,7 +13,7 @@ Configuration Service is a remote configuration service for .NET Core.  Configur
 
 Configuration Service currently supports hosting configuration with either git or a file system and supports publishing changes with Redis pub/sub.  File types supported are .json, .yaml, .xml and .ini.
 
-<img src="https://github.com/jamespratt/configuration-service/blob/master/images/Configuration%20Service.png" height="300" alt="Configuration Service Diagram">
+![Configuration Service Diagram](/images/Configuration%20Service.png)
 
 ## Installing with NuGet
 
