@@ -5,9 +5,9 @@ namespace ConfigurationService.Hosting
 {
     public static class Hasher
     {
-        public static string CreateMD5Hash(byte[] bytes)
+        public static string CreateHash(byte[] bytes)
         {
-            using (var hash = MD5.Create())
+            using (var hash = SHA1.Create())
             {
                 var hashBytes = hash.ComputeHash(bytes);
 

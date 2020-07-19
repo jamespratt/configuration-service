@@ -74,7 +74,7 @@ namespace ConfigurationService.Providers.Git
         {
             var bytes = GetFile(fileName);
 
-            return Hasher.CreateMD5Hash(bytes);
+            return Hasher.CreateHash(bytes);
         }
 
         public IEnumerable<string> ListAllFiles()

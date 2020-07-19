@@ -152,7 +152,7 @@ namespace ConfigurationService.Client
                         {
                             _logger.LogInformation("Parsing remote configuration response stream ({Length:N0} bytes) for configuration '{ConfigurationName}'.", stream.Length, _source.ConfigurationName);
 
-                            Hash = ComputeMd5Hash(stream);
+                            Hash = ComputeHash(stream);
                             _logger.LogInformation("Computed hash for Configuration '{ConfigurationName}' is {Hash}.", _source.ConfigurationName, Hash);
 
                             stream.Position = 0;
@@ -181,9 +181,9 @@ namespace ConfigurationService.Client
             return null;
         }
 
-        private string ComputeMd5Hash(Stream stream)
+        private string ComputeHash(Stream stream)
         {
-            using (var hash = MD5.Create())
+            using (var hash = SHA1.Create())
             {
                 var hashBytes = hash.ComputeHash(stream);
 
