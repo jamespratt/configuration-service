@@ -71,7 +71,7 @@ The configured host will expose two API endpoints:
 |Password|Password for authentication.|
 |Branch|The name of the branch to checkout. When unspecified the remote's default branch will be used instead.|
 |LocalPath|Local path to clone into.|
-|SearchPattern|The search string to use as a filter against the names of files. Defaults to `*`.|
+|SearchPattern|The search string to use as a filter against the names of files. Defaults to no filter (*).|
 |PollingInterval|The interval to check for remote changes. Defaults to 60 seconds.|
 
 ```csharp
@@ -93,7 +93,7 @@ services.AddConfigurationService()
 |  Property  | Description |
 |:-----------|:------------|
 |Path|Path to the configuration files.|
-|SearchPattern|The search string to use as a filter against the names of files. Defaults to `*`.|
+|SearchPattern|The search string to use as a filter against the names of files. Defaults to no filter (*).|
 |IncludeSubdirectories|Includes the current directory and all its subdirectories. Defaults to `false`.|
 
 ```csharp
@@ -137,7 +137,7 @@ configuration = new ConfigurationBuilder()
 #### Configuration Soruce Options
 |  Property  | Description |
 |:-----------|:------------|
-|ConfigurationName|Short name of the configuration file relative to the configuration provider.|
+|ConfigurationName|Path or name of the configuration file relative to the configuration provider.|
 |ConfigurationServiceUri|Configuration service endpoint.|
 |SubscriberConfiguration|Connection string for the subscriber. This is required if `ReloadOnChange` is `true`.|
 |Optional|Determines if loading the file is optional.|
