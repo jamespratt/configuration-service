@@ -3,7 +3,6 @@ using ConfigurationService.Hosting.Providers;
 using ConfigurationService.Hosting.Providers.FileSystem;
 using ConfigurationService.Hosting.Providers.Git;
 using ConfigurationService.Hosting.Publishers;
-using ConfigurationService.Hosting.Publishers.Redis;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 

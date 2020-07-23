@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 
-namespace ConfigurationService.Hosting.Publishers.Redis
+namespace ConfigurationService.Hosting.Publishers
 {
     public class RedisPublisher : IPublisher
     {
