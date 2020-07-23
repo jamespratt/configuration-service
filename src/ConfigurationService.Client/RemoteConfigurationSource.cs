@@ -21,11 +21,6 @@ namespace ConfigurationService.Client
         public string ConfigurationServiceUri { get; set; }
 
         /// <summary>
-        /// Connection string for the subscriber.
-        /// </summary>
-        public string SubscriberConfiguration { get; set; }
-
-        /// <summary>
         /// Determines if loading the file is optional. Defaults to false>.
         /// </summary>
         public bool Optional { get; set; }

@@ -7,9 +7,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using ConfigurationService.Client.Parsers;
-using ConfigurationService.Client.Subscribers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace ConfigurationService.Client
 {
@@ -30,7 +30,19 @@ namespace ConfigurationService.Client
         {
             _source = source ?? throw new ArgumentNullException(nameof(source));
 
-            _logger = source.LoggerFactory.CreateLogger<RemoteConfigurationProvider>();
+            if (source.ConfigurationName == null)
+            {
+                throw new ArgumentNullException(nameof(source.ConfigurationName));
+            }
+
+            if (source.ConfigurationServiceUri == null)
+            {
+                throw new ArgumentNullException(nameof(source.ConfigurationServiceUri));
+            }
+
+            Logger.LoggerFactory = source.LoggerFactory ?? new NullLoggerFactory();
+
+            _logger = Logger.CreateLogger<RemoteConfigurationProvider>();
 
             _logger.LogInformation("Initializing remote configuration source for configuration '{ConfigurationName}'.", source.ConfigurationName);
 
@@ -40,7 +52,7 @@ namespace ConfigurationService.Client
 
             if (_parser == null)
             {
-                var extension = Path.GetExtension(source.ConfigurationName)?.ToLower();
+                var extension = Path.GetExtension(source.ConfigurationName).ToLower();
 
                 _logger.LogInformation("A file parser was not specified. Attempting to resolve parser from file extension '{extension}'.", extension);
 
@@ -65,7 +77,13 @@ namespace ConfigurationService.Client
 
             if (source.ReloadOnChange)
             {
-                var subscriber = source.Subscriber ?? new RedisSubscriber(source.SubscriberConfiguration, source.LoggerFactory.CreateLogger<RedisSubscriber>());
+                var subscriber = source.Subscriber;
+
+                if (subscriber == null)
+                {
+                    _logger.LogWarning("ReloadOnChange is enabled but a subscriber has not been configured.");
+                    return;
+                }
 
                 _logger.LogInformation("Initializing remote configuration {Name} subscriber for configuration '{ConfigurationName}'.", subscriber.Name, source.ConfigurationName);
 
@@ -143,13 +161,15 @@ namespace ConfigurationService.Client
             {
                 using (var response = await HttpClient.GetAsync(encodedConfigurationName))
                 {
-                    _logger.LogInformation("Received response status code {StatusCode} from endpoint for configuration '{ConfigurationName}'.", response.StatusCode, _source.ConfigurationName);
+                    _logger.LogInformation("Received response status code {StatusCode} from endpoint for configuration '{ConfigurationName}'.",
+                        response.StatusCode, _source.ConfigurationName);
 
                     if (response.IsSuccessStatusCode)
                     {
                         using (var stream = await response.Content.ReadAsStreamAsync())
                         {
-                            _logger.LogInformation("Parsing remote configuration response stream ({Length:N0} bytes) for configuration '{ConfigurationName}'.", stream.Length, _source.ConfigurationName);
+                            _logger.LogInformation("Parsing remote configuration response stream ({Length:N0} bytes) for configuration '{ConfigurationName}'.",
+                                stream.Length, _source.ConfigurationName);
 
                             Hash = ComputeHash(stream);
                             _logger.LogInformation("Computed hash for Configuration '{ConfigurationName}' is {Hash}.", _source.ConfigurationName, Hash);
