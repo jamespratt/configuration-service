@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using LibGit2Sharp;
@@ -71,9 +70,8 @@ namespace ConfigurationService.Hosting.Providers.Git
                         throw new Exception("Attempting to list changed files timed out after 60 seconds.");
                     }
 
-                    if (files.Any())
+                    if (files.Count > 0)
                     {
-                        UpdateLocal();
                         await onChange(files);
                     }
                 }
@@ -158,30 +156,24 @@ namespace ConfigurationService.Hosting.Providers.Git
 
         public IEnumerable<string> ListAllFiles()
         {
+            _logger.LogInformation("Listing files at {LocalPath}.", _providerOptions.LocalPath);
+
             IList<string> files = new List<string>();
 
             using (var repo = new Repository(_providerOptions.LocalPath))
             {
                 _logger.LogInformation("Listing files in repository at {LocalPath}.", _providerOptions.LocalPath);
 
-                foreach (IndexEntry entry in repo.Index)
+                foreach (var entry in repo.Index)
                 {
-                    if (_providerOptions.SearchPattern != null)
-                    {
-                        var match = WildcardMatch(entry.Path, _providerOptions.SearchPattern);
-
-                        if (match == false)
-                        {
-                            _logger.LogInformation("File {Path} does not match search pattern {SearchPattern}.",
-                                entry.Path, _providerOptions.SearchPattern);
-
-                            continue;
-                        }
-                    }
-
                     files.Add(entry.Path);
                 }
             }
+
+            var localFiles = Directory.EnumerateFiles(_providerOptions.LocalPath, _providerOptions.SearchPattern ?? "*", SearchOption.AllDirectories).ToList();
+            localFiles = localFiles.Select(GetRelativePath).ToList();
+
+            files = localFiles.Intersect(files).ToList();
 
             _logger.LogInformation("{Count} files found.", files.Count);
 
@@ -192,7 +184,7 @@ namespace ConfigurationService.Hosting.Providers.Git
         {
             Fetch();
 
-            IList<string> files = new List<string>();
+            IList<string> changedFiles = new List<string>();
 
             using (var repo = new Repository(_providerOptions.LocalPath))
             {
@@ -203,21 +195,7 @@ namespace ConfigurationService.Hosting.Providers.Git
                     if (entry.Exists)
                     {
                         _logger.LogInformation("File {Path} changed.", entry.Path);
-
-                        if (_providerOptions.SearchPattern != null)
-                        {
-                            var match = WildcardMatch(entry.Path, _providerOptions.SearchPattern);
-
-                            if (match == false)
-                            {
-                                _logger.LogInformation("File {Path} does not match search pattern {SearchPattern}.",
-                                    entry.Path, _providerOptions.SearchPattern);
-
-                                continue;
-                            }
-                        }
-
-                        files.Add(entry.Path);
+                        changedFiles.Add(entry.Path);
                     }
                     else
                     {
@@ -226,16 +204,21 @@ namespace ConfigurationService.Hosting.Providers.Git
                 }
             }
 
-            if (files.Count == 0)
+            if (changedFiles.Count == 0)
             {
                 _logger.LogInformation("No tree entry changes were detected.");
 
-                return files;
+                return changedFiles;
             }
 
-            _logger.LogInformation("{Count} files changed.", files.Count);
+            UpdateLocal();
 
-            return files;
+            var filteredFiles = ListAllFiles();
+            changedFiles = filteredFiles.Intersect(changedFiles).ToList();
+
+            _logger.LogInformation("{Count} files changed.", changedFiles.Count);
+
+            return changedFiles;
         }
 
         private void UpdateLocal()
@@ -308,10 +291,9 @@ namespace ConfigurationService.Hosting.Providers.Git
             }
         }
 
-        private bool WildcardMatch(string value, string searchPattern)
+        private string GetRelativePath(string fullPath)
         {
-            var expression = "^" + Regex.Escape(searchPattern).Replace("\\*", ".*") + "$";
-            return Regex.IsMatch(value, expression, RegexOptions.IgnoreCase);
+            return Path.GetRelativePath(_providerOptions.LocalPath, fullPath);
         }
     }
 }
