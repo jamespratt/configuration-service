@@ -126,7 +126,7 @@ configuration = new ConfigurationBuilder()
     {
         s.ConfigurationName = "text.json";
         s.ConfigurationServiceUri = "http://localhost:5000/configuration/";
-        s.SubscriberConfiguration = "localhost:6379";
+        s.Subscriber = new RedisSubscriber("localhost:6379");
         s.Optional = false;
         s.ReloadOnChange = true;
         s.LoggerFactory = loggerFactory;
@@ -139,7 +139,6 @@ configuration = new ConfigurationBuilder()
 |:-----------|:------------|
 |ConfigurationName|Path or name of the configuration file relative to the configuration provider.|
 |ConfigurationServiceUri|Configuration service endpoint.|
-|SubscriberConfiguration|Connection string for the subscriber. This is required if `ReloadOnChange` is `true`.|
 |Optional|Determines if loading the file is optional.|
 |ReloadOnChange|Determines whether the source will be loaded if the underlying file changes.|
 |HttpMessageHandler|The optional `HttpMessageHandler` for the `HttpClient`.|
