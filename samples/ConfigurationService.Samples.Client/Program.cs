@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ConfigurationService.Client;
+using ConfigurationService.Client.Subscribers;
 
 namespace ConfigurationService.Samples.Client
 {
@@ -26,7 +27,7 @@ namespace ConfigurationService.Samples.Client
                 {
                     s.ConfigurationName = configuration["ConfigurationName"];
                     s.ConfigurationServiceUri = configuration["ConfigurationServiceUri"];
-                    s.SubscriberConfiguration = configuration["SubscriberConfiguration"];
+                    s.Subscriber = new RedisSubscriber(configuration["SubscriberConfiguration"]);
                     s.Optional = false;
                     s.ReloadOnChange = true;
                     s.LoggerFactory = loggerFactory;
