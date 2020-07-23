@@ -18,7 +18,6 @@ namespace ConfigurationService.Test
         private readonly IPublisher _publisher;
         private readonly IConfigurationService _configurationService;
 
-
         public ConfigurationServiceTests()
         {
             _logger = Substitute.For<ILogger<Hosting.ConfigurationService>>();

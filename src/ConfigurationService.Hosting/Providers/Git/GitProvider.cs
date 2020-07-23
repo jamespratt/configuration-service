@@ -90,7 +90,8 @@ namespace ConfigurationService.Hosting.Providers.Git
 
         public void Initialize()
         {
-            _logger.LogInformation("Initializing {Name} provider with options {Options}.", Name, new {
+            _logger.LogInformation("Initializing {Name} provider with options {Options}.", Name, new
+            {
                 _providerOptions.RepositoryUrl,
                 _providerOptions.LocalPath,
                 _providerOptions.Branch,
@@ -126,12 +127,10 @@ namespace ConfigurationService.Hosting.Providers.Git
 
             _logger.LogInformation("Repository cloned to {path}.", path);
 
-            using (var repo = new Repository(_providerOptions.LocalPath))
-            {
-                var hash = repo.Head.Tip.Sha.Substring(0, 6);
+            using var repo = new Repository(_providerOptions.LocalPath);
+            var hash = repo.Head.Tip.Sha.Substring(0, 6);
 
-                _logger.LogInformation("Current HEAD is [{hash}] '{MessageShort}'.", hash, repo.Head.Tip.MessageShort);
-            }
+            _logger.LogInformation("Current HEAD is [{hash}] '{MessageShort}'.", hash, repo.Head.Tip.MessageShort);
         }
 
         public byte[] GetFile(string fileName)
@@ -223,32 +222,30 @@ namespace ConfigurationService.Hosting.Providers.Git
 
         private void UpdateLocal()
         {
-            using (var repo = new Repository(_providerOptions.LocalPath))
+            using var repo = new Repository(_providerOptions.LocalPath);
+            var options = new PullOptions
             {
-                var options = new PullOptions
+                FetchOptions = new FetchOptions
                 {
-                    FetchOptions = new FetchOptions
-                    {
-                        CredentialsProvider = _credentialsHandler
-                    }
-                };
+                    CredentialsProvider = _credentialsHandler
+                }
+            };
 
-                var signature = new Signature(new Identity("Configuration Service", "Configuration Service"), DateTimeOffset.Now);
+            var signature = new Signature(new Identity("Configuration Service", "Configuration Service"), DateTimeOffset.Now);
 
-                _logger.LogInformation("Pulling changes to local repository.");
+            _logger.LogInformation("Pulling changes to local repository.");
 
-                var currentHash = repo.Head.Tip.Sha.Substring(0, 6);
+            var currentHash = repo.Head.Tip.Sha.Substring(0, 6);
 
-                _logger.LogInformation("Current HEAD is [{currentHash}] '{MessageShort}'.", currentHash, repo.Head.Tip.MessageShort);
+            _logger.LogInformation("Current HEAD is [{currentHash}] '{MessageShort}'.", currentHash, repo.Head.Tip.MessageShort);
 
-                var result = Commands.Pull(repo, signature, options);
+            var result = Commands.Pull(repo, signature, options);
 
-                _logger.LogInformation("Merge completed with status {Status}.", result.Status);
+            _logger.LogInformation("Merge completed with status {Status}.", result.Status);
 
-                var newHash = result.Commit.Sha.Substring(0, 6);
+            var newHash = result.Commit.Sha.Substring(0, 6);
 
-                _logger.LogInformation("New HEAD is [{newHash}] '{MessageShort}'.", newHash, result.Commit.MessageShort);
-            }
+            _logger.LogInformation("New HEAD is [{newHash}] '{MessageShort}'.", newHash, result.Commit.MessageShort);
         }
 
         private static void DeleteDirectory(string directory)
@@ -273,21 +270,19 @@ namespace ConfigurationService.Hosting.Providers.Git
 
         private void Fetch()
         {
-            using (var repo = new Repository(_providerOptions.LocalPath))
+            using var repo = new Repository(_providerOptions.LocalPath);
+            FetchOptions options = new FetchOptions
             {
-                FetchOptions options = new FetchOptions
-                {
-                    CredentialsProvider = _credentialsHandler
-                };
+                CredentialsProvider = _credentialsHandler
+            };
 
-                foreach (var remote in repo.Network.Remotes)
-                {
-                    var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
+            foreach (var remote in repo.Network.Remotes)
+            {
+                var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
 
-                    _logger.LogInformation("Fetching from remote {Name} at {Url}.", remote.Name, remote.Url);
+                _logger.LogInformation("Fetching from remote {Name} at {Url}.", remote.Name, remote.Url);
 
-                    Commands.Fetch(repo, remote.Name, refSpecs, options, string.Empty);
-                }
+                Commands.Fetch(repo, remote.Name, refSpecs, options, string.Empty);
             }
         }
 
