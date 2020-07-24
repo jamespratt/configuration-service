@@ -46,9 +46,9 @@ namespace ConfigurationService.Client
         public IConfigurationParser Parser { get; set; }
 
         /// <summary>
-        /// The type of <see cref="ISubscriber"/> used to subscribe to published configuration messages.
+        /// Delegate to create the type of <see cref="ISubscriber"/> used to subscribe to published configuration messages.
         /// </summary>
-        public ISubscriber Subscriber { get; set; }
+        public Func<ISubscriber> Subscriber { get; set; }
 
         /// <summary>
         /// The type used to configure the logging system and create instances of <see cref="ILogger"/>

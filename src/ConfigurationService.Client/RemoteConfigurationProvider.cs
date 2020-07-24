@@ -77,13 +77,13 @@ namespace ConfigurationService.Client
 
             if (source.ReloadOnChange)
             {
-                var subscriber = source.Subscriber;
-
-                if (subscriber == null)
+                if (source.Subscriber == null)
                 {
                     _logger.LogWarning("ReloadOnChange is enabled but a subscriber has not been configured.");
                     return;
                 }
+
+                var subscriber = source.Subscriber();
 
                 _logger.LogInformation("Initializing remote configuration {Name} subscriber for configuration '{ConfigurationName}'.", subscriber.Name, source.ConfigurationName);
 
