@@ -9,7 +9,7 @@ namespace ConfigurationService.Client
 
         public static ILoggerFactory LoggerFactory
         {
-            get => _factory ?? (_factory = new NullLoggerFactory());
+            get => _factory = _factory ?? new NullLoggerFactory();
             set => _factory = value;
         }
 
