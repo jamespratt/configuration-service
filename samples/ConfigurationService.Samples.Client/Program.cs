@@ -27,7 +27,7 @@ namespace ConfigurationService.Samples.Client
                 {
                     s.ConfigurationName = configuration["ConfigurationName"];
                     s.ConfigurationServiceUri = configuration["ConfigurationServiceUri"];
-                    s.Subscriber = new RedisSubscriber(configuration["SubscriberConfiguration"]);
+                    s.Subscriber = () => new RedisSubscriber(configuration["SubscriberConfiguration"]);
                     s.Optional = false;
                     s.ReloadOnChange = true;
                     s.LoggerFactory = loggerFactory;
