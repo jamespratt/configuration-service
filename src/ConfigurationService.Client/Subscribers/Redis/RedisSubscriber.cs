@@ -3,7 +3,7 @@ using System.IO;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 
-namespace ConfigurationService.Client.Subscribers
+namespace ConfigurationService.Client.Subscribers.Redis
 {
     public class RedisSubscriber : ISubscriber
     {

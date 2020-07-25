@@ -1,9 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 
-namespace ConfigurationService.Hosting.Publishers
+namespace ConfigurationService.Hosting.Publishers.Redis
 {
     public class RedisPublisher : IPublisher
     {
@@ -13,14 +14,25 @@ namespace ConfigurationService.Hosting.Publishers
 
         public RedisPublisher(ILogger<RedisPublisher> logger, ConfigurationOptions configuration)
         {
+            _logger = logger;
+
             if (configuration == null)
             {
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            _logger = logger;
+            using (var writer = new StringWriter())
+            {
+                _connection = ConnectionMultiplexer.Connect(configuration, writer);
 
-            _connection = ConnectionMultiplexer.Connect(configuration);
+                _logger.LogDebug(writer.ToString());
+            }
+
+            _connection.ErrorMessage += (sender, args) => { _logger.LogError(args.Message); };
+
+            _connection.ConnectionFailed += (sender, args) => { _logger.LogError(args.Exception, "Redis connection failed."); };
+
+            _connection.ConnectionRestored += (sender, args) => { _logger.LogInformation("Redis connection restored."); };
         }
 
         public async Task Publish(string topic, string message)
