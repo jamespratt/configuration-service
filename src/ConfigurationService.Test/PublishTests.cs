@@ -11,14 +11,14 @@ using Xunit;
 
 namespace ConfigurationService.Test
 {
-    public class ConfigurationServiceTests
+    public class PublishTests
     {
         private readonly ILogger<Hosting.ConfigurationService> _logger;
         private readonly IProvider _provider;
         private readonly IPublisher _publisher;
         private readonly IConfigurationService _configurationService;
 
-        public ConfigurationServiceTests()
+        public PublishTests()
         {
             _logger = Substitute.For<ILogger<Hosting.ConfigurationService>>();
             _publisher = Substitute.For<IPublisher>();

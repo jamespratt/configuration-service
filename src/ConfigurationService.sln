@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigurationService.Hostin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigurationService.Client", "ConfigurationService.Client\ConfigurationService.Client.csproj", "{7A654435-A733-4BCD-8477-77065F75C438}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigurationService.Test", "ConfigurationService.Test\ConfigurationService.Test.csproj", "{D76FFB0A-603C-47B0-B5F9-B85092E091D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigurationService.Test", "ConfigurationService.Test\ConfigurationService.Test.csproj", "{D76FFB0A-603C-47B0-B5F9-B85092E091D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

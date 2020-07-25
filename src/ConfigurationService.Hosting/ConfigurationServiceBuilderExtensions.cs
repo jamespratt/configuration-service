@@ -3,6 +3,8 @@ using ConfigurationService.Hosting.Providers;
 using ConfigurationService.Hosting.Providers.FileSystem;
 using ConfigurationService.Hosting.Providers.Git;
 using ConfigurationService.Hosting.Publishers;
+using ConfigurationService.Hosting.Publishers.RabbitMq;
+using ConfigurationService.Hosting.Publishers.Redis;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 
@@ -86,6 +88,58 @@ namespace ConfigurationService.Hosting
         }
 
         /// <summary>
+        /// Adds a custom storage provider backend.
+        /// </summary>
+        /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
+        /// <param name="provider">The custom implementation of <see cref="IProvider"/>.</param>
+        /// <returns>An <see cref="IConfigurationServiceBuilder"/> that can be used to further configure the 
+        /// ConfigurationService services.</returns>
+        public static IConfigurationServiceBuilder AddCustomProvider(this IConfigurationServiceBuilder builder, IProvider provider)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+
+            builder.Services.AddSingleton(provider);
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Adds RabbitMQ as the configuration publisher.
+        /// </summary>
+        /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
+        /// <param name="configure">Configure options for the Redis multiplexer.</param>
+        /// <returns>An <see cref="IConfigurationServiceBuilder"/> that can be used to further configure the 
+        /// ConfigurationService services.</returns>
+        public static IConfigurationServiceBuilder AddRabbitMqPublisher(this IConfigurationServiceBuilder builder, Action<RabbitMqOptions> configure)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (configure == null)
+            {
+                throw new ArgumentNullException(nameof(configure));
+            }
+
+            var options = new RabbitMqOptions();
+            configure(options);
+
+            builder.Services.AddSingleton(options);
+            builder.Services.AddSingleton<IPublisher, RabbitMqPublisher>();
+
+            return builder;
+        }
+
+        /// <summary>
         /// Adds Redis as the configuration publisher.
         /// </summary>
         /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
@@ -136,6 +190,30 @@ namespace ConfigurationService.Hosting
 
             builder.Services.AddSingleton(options);
             builder.Services.AddSingleton<IPublisher, RedisPublisher>();
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Adds a custom configuration publisher.
+        /// </summary>
+        /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
+        /// <param name="publisher">The custom implementation of <see cref="IPublisher"/>.</param>
+        /// <returns>An <see cref="IConfigurationServiceBuilder"/> that can be used to further configure the 
+        /// ConfigurationService services.</returns>
+        public static IConfigurationServiceBuilder AddCustomPublisher(this IConfigurationServiceBuilder builder, IPublisher publisher)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (publisher == null)
+            {
+                throw new ArgumentNullException(nameof(publisher));
+            }
+
+            builder.Services.AddSingleton(publisher);
 
             return builder;
         }
