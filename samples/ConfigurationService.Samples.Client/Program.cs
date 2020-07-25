@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ConfigurationService.Client;
-using ConfigurationService.Client.Subscribers;
+using ConfigurationService.Client.Subscribers.Redis;
 
 namespace ConfigurationService.Samples.Client
 {
@@ -17,17 +17,17 @@ namespace ConfigurationService.Samples.Client
                 builder.AddConsole();
             });
 
-            IConfiguration configuration = new ConfigurationBuilder()
+            IConfiguration localConfiguration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            configuration = new ConfigurationBuilder()
-                .AddConfiguration(configuration)
+            var configuration = new ConfigurationBuilder()
+                .AddConfiguration(localConfiguration)
                 .AddRemoteSource(s => 
                 {
-                    s.ConfigurationName = configuration["ConfigurationName"];
-                    s.ConfigurationServiceUri = configuration["ConfigurationServiceUri"];
-                    s.Subscriber = () => new RedisSubscriber(configuration["SubscriberConfiguration"]);
+                    s.ConfigurationName = localConfiguration["ConfigurationName"];
+                    s.ConfigurationServiceUri = localConfiguration["ConfigurationServiceUri"];
+                    s.Subscriber = () => new RedisSubscriber(localConfiguration["SubscriberConfiguration"]);
                     s.Optional = false;
                     s.ReloadOnChange = true;
                     s.LoggerFactory = loggerFactory;
