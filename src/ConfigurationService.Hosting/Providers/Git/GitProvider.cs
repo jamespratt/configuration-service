@@ -248,14 +248,14 @@ namespace ConfigurationService.Hosting.Providers.Git
             _logger.LogInformation("New HEAD is [{newHash}] '{MessageShort}'.", newHash, result.Commit.MessageShort);
         }
 
-        private static void DeleteDirectory(string directory)
+        private static void DeleteDirectory(string path)
         {
-            foreach (var subdirectory in Directory.EnumerateDirectories(directory))
+            foreach (var directory in Directory.EnumerateDirectories(path))
             {
-                DeleteDirectory(subdirectory);
+                DeleteDirectory(directory);
             }
 
-            foreach (var fileName in Directory.EnumerateFiles(directory))
+            foreach (var fileName in Directory.EnumerateFiles(path))
             {
                 var fileInfo = new FileInfo(fileName)
                 {
@@ -265,7 +265,7 @@ namespace ConfigurationService.Hosting.Providers.Git
                 fileInfo.Delete();
             }
 
-            Directory.Delete(directory);
+            Directory.Delete(path);
         }
 
         private void Fetch()
