@@ -45,6 +45,7 @@ namespace ConfigurationService.Samples.Host
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapConfigurationService();
             });
         }
     }
