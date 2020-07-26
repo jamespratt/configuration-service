@@ -16,6 +16,8 @@ Configuration Service currently supports hosting configuration with either git o
 
 [![Configuration Service Diagram](https://github.com/jamespratt/configuration-service/blob/master/images/configuration-service.png)](#about-configuration-service)
 
+[![Configuration Service Diagram](https://github.com/jamespratt/configuration-service/blob/master/images/configuration-service-alt.png)](#about-configuration-service)
+
 ## Features
 * RESTful HTTP based API for external configuration.
 * Server easily integrates into an ASP.NET Core application.
