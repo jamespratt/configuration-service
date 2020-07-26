@@ -13,9 +13,9 @@ namespace ConfigurationService.Hosting.Providers
 
         void Initialize();
 
-        byte[] GetFile(string fileName);
+        Task<byte[]> GetFile(string fileName);
 
-        string GetHash(string fileName);
+        Task<string> GetHash(string fileName);
 
         IEnumerable<string> ListAllFiles();
     }

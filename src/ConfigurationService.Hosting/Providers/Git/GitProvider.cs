@@ -133,7 +133,7 @@ namespace ConfigurationService.Hosting.Providers.Git
             _logger.LogInformation("Current HEAD is [{hash}] '{MessageShort}'.", hash, repo.Head.Tip.MessageShort);
         }
 
-        public byte[] GetFile(string fileName)
+        public async Task<byte[]> GetFile(string fileName)
         {
             string path = Path.Combine(_providerOptions.LocalPath, fileName);
 
@@ -143,12 +143,12 @@ namespace ConfigurationService.Hosting.Providers.Git
                 return null;
             }
 
-            return File.ReadAllBytes(path);
+            return await File.ReadAllBytesAsync(path);
         }
 
-        public string GetHash(string fileName)
+        public async Task<string> GetHash(string fileName)
         {
-            var bytes = GetFile(fileName);
+            var bytes = await GetFile(fileName);
 
             return Hasher.CreateHash(bytes);
         }

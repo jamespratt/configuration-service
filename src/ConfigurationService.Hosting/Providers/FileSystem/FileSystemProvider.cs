@@ -58,7 +58,7 @@ namespace ConfigurationService.Hosting.Providers.FileSystem
             _fileSystemWatcher.Changed += FileSystemWatcher_Changed;
         }
 
-        public byte[] GetFile(string fileName)
+        public async Task<byte[]> GetFile(string fileName)
         {
             string path = Path.Combine(_providerOptions.Path, fileName);
 
@@ -68,12 +68,12 @@ namespace ConfigurationService.Hosting.Providers.FileSystem
                 return null;
             }
 
-            return File.ReadAllBytes(path);
+            return await File.ReadAllBytesAsync(path);
         }
 
-        public string GetHash(string fileName)
+        public async Task<string> GetHash(string fileName)
         {
-            var bytes = GetFile(fileName);
+            var bytes = await GetFile(fileName);
 
             return Hasher.CreateHash(bytes);
         }

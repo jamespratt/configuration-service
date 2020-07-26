@@ -65,7 +65,7 @@ namespace ConfigurationService.Hosting
 
             foreach (var filePath in files)
             {
-                var hash = _provider.GetHash(filePath);
+                var hash = await _provider.GetHash(filePath);
                 await _publisher.Publish(filePath, hash);
             }
         }
