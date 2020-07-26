@@ -14,8 +14,11 @@ Configuration Service is a remote configuration service for .NET Core.  Configur
 
 Configuration Service currently supports hosting configuration with either git or a file system and supports publishing changes with Redis or RabbitMQ publish/subscribe.  File types supported are .json, .yaml, .xml and .ini.
 
+
+#### Git Storage Provider with Redis Publisher
 [![Configuration Service Diagram](https://github.com/jamespratt/configuration-service/blob/master/images/configuration-service.png)](#about-configuration-service)
 
+#### File System Storage Provider with RabbitMQ Publisher
 [![Configuration Service Diagram](https://github.com/jamespratt/configuration-service/blob/master/images/configuration-service-alt.png)](#about-configuration-service)
 
 ## Features
