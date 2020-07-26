@@ -117,6 +117,15 @@ services.AddConfigurationService()
     ...
 ```
 
+#### Custom Storage Providers and Publishers
+Custom implementations of storage providers and publishers can be addded by implementing the `IProvider` and `IPublisher` interfaces and calling the appropriate extension methods on AddConfigurationService:
+
+```csharp
+services.AddConfigurationService()
+    .AddCustomProvider(new CustomStorageProvider())
+    .AddCustomPublisher(new CustomPublisher());
+```
+
 ## Adding the Configuration Service Client
 The Configuration Service client can be configured by adding `AddRemoteSource` to the standard configuration builder. In the following example, remote json configuration is added and a Redis endpoint is specified for configuration change subscription.  Local configuration can be read for settings for the remote source by using multiple instances of the configuration. 
 
