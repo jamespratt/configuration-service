@@ -10,6 +10,7 @@ namespace ConfigurationService.Client.Subscribers.RabbitMq
     {
         private readonly ILogger _logger;
 
+        private readonly string _exchangeName;
         private static IModel _channel;
 
         public string Name => "RabbitMQ";
@@ -31,6 +32,8 @@ namespace ConfigurationService.Client.Subscribers.RabbitMq
                 Password = options.Password
             };
 
+            _exchangeName = options.ExchangeName;
+
             var connection = factory.CreateConnection();
             _channel = connection.CreateModel();
 
@@ -42,7 +45,7 @@ namespace ConfigurationService.Client.Subscribers.RabbitMq
 
             connection.ConnectionUnblocked += (sender, args) => { _logger.LogInformation("RabbitMQ connection was unblocked."); };
 
-            _channel.ExchangeDeclare("configuration-service", ExchangeType.Fanout);
+            _channel.ExchangeDeclare(_exchangeName, ExchangeType.Fanout);
         }
 
         public void Subscribe(string topic, Action<object> handler)
@@ -52,7 +55,7 @@ namespace ConfigurationService.Client.Subscribers.RabbitMq
             _logger.LogInformation("Binding to RabbitMQ queue with routing key '{routingKey}'.", routingKey);
 
             var queueName = _channel.QueueDeclare().QueueName;
-            _channel.QueueBind(queueName, "configuration-service", routingKey);
+            _channel.QueueBind(queueName, _exchangeName, routingKey);
 
             var consumer = new EventingBasicConsumer(_channel);
 

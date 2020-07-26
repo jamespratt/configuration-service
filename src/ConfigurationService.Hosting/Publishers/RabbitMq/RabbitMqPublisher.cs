@@ -10,6 +10,7 @@ namespace ConfigurationService.Hosting.Publishers.RabbitMq
     {
         private readonly ILogger<RabbitMqPublisher> _logger;
 
+        private readonly string _exchangeName;
         private static IModel _channel;
 
         public RabbitMqPublisher(ILogger<RabbitMqPublisher> logger, RabbitMqOptions options)
@@ -29,6 +30,8 @@ namespace ConfigurationService.Hosting.Publishers.RabbitMq
                 Password = options.Password
             };
 
+            _exchangeName = options.ExchangeName;
+
             var connection = factory.CreateConnection();
             _channel = connection.CreateModel();
 
@@ -40,7 +43,7 @@ namespace ConfigurationService.Hosting.Publishers.RabbitMq
 
             connection.ConnectionUnblocked += (sender, args) => { _logger.LogInformation("RabbitMQ connection was unblocked."); };
 
-            _channel.ExchangeDeclare("configuration-service", ExchangeType.Fanout);
+            _channel.ExchangeDeclare(_exchangeName, ExchangeType.Fanout);
 
         }
 
@@ -49,7 +52,7 @@ namespace ConfigurationService.Hosting.Publishers.RabbitMq
             _logger.LogInformation("Publishing message with routing key {topic}.", topic);
 
             var body = Encoding.UTF8.GetBytes(message);
-            _channel.BasicPublish("configuration-service", topic, null, body);
+            _channel.BasicPublish(_exchangeName, topic, null, body);
 
             return Task.CompletedTask;
         }

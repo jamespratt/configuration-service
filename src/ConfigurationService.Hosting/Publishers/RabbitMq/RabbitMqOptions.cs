@@ -23,5 +23,11 @@
         /// Defaults to "guest".
         /// </summary>
         public string Password { get; set; } = "guest";
+
+        /// <summary>
+        /// Name of the fanout exchange.
+        /// Defaults to "configuration-service"
+        /// </summary>
+        public string ExchangeName { get; set; } = "configuration-service";
     }
 }
