@@ -19,5 +19,20 @@
         /// Includes the current directory and all its subdirectories.
         /// </summary>
         public bool IncludeSubdirectories { get; set; }
+
+        /// <summary>
+        /// Username for authentication.
+        /// </summary>
+        public string Username { get; set; }
+
+        /// <summary>
+        /// Password for authentication.
+        /// </summary>
+        public string Password { get; set; }
+
+        /// <summary>
+        /// Domain for authentication.
+        /// </summary>
+        public string Domain { get; set; }
     }
 }

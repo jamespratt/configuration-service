@@ -26,7 +26,7 @@ namespace ConfigurationService.Hosting.Publishers.RabbitMq
             {
                 HostName = options.HostName,
                 VirtualHost = options.VirtualHost,
-                UserName =  options.UserName,
+                UserName = options.UserName,
                 Password = options.Password
             };
 

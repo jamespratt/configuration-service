@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -45,6 +47,14 @@ namespace ConfigurationService.Hosting.Providers.FileSystem
                 _providerOptions.IncludeSubdirectories
             });
 
+            if (_providerOptions.Username != null && _providerOptions.Password != null)
+            {
+                var credentials = new NetworkCredential(_providerOptions.Username, _providerOptions.Password, _providerOptions.Domain);
+                var uri = new Uri(_providerOptions.Path);
+                var credentialCache = new CredentialCache();
+                credentialCache.Add(new Uri($"{uri.Scheme}://{uri.Host}"), "Basic", credentials);
+            }
+
             _fileSystemWatcher = new FileSystemWatcher
             {
                 Path = _providerOptions.Path,
@@ -52,7 +62,6 @@ namespace ConfigurationService.Hosting.Providers.FileSystem
                 IncludeSubdirectories = _providerOptions.IncludeSubdirectories,
                 NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName
             };
-
 
             _fileSystemWatcher.Created += FileSystemWatcher_Changed;
             _fileSystemWatcher.Changed += FileSystemWatcher_Changed;
