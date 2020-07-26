@@ -171,3 +171,5 @@ configuration = new ConfigurationBuilder()
 
 ## Samples
 Samples of both host and client implementations can be viewed at [Samples](https://github.com/jamespratt/configuration-service/tree/master/samples).
+
+[![Build history](https://buildstats.info/github/chart/jamespratt/configuration-service)](https://github.com/jamespratt/configuration-service/actions?query=workflow%3Arelease)
