@@ -59,6 +59,16 @@ public void ConfigureServices(IServiceCollection services)
         .AddRedisPublisher("localhost:6379");
 }
 ```
+
+In Startup.Configure, call `MapConfigurationService` on the endpoint builder. The default pattern is "/configuration".
+
+```csharp
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapConfigurationService();
+});
+```
+
 The configured host will expose two API endpoints:
 * `configuration/` - Lists all files at the configured provider.
 * `configuration/{filename}` - Retrieves the contents of the specified file.
