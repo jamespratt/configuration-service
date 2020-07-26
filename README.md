@@ -105,6 +105,9 @@ services.AddConfigurationService()
 |Path|Path to the configuration files.|
 |SearchPattern|The search string to use as a filter against the names of files. Defaults to no filter (*).|
 |IncludeSubdirectories|Includes the current directory and all its subdirectories. Defaults to `false`.|
+|Username|Username for authentication.|
+|Password|Password for authentication.|
+|Domain|Domain for authentication.|
 
 ```csharp
 services.AddConfigurationService()
