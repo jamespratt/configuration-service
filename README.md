@@ -121,7 +121,7 @@ services.AddConfigurationService()
 ```
 
 #### Custom Storage Providers and Publishers
-Custom implementations of storage providers and publishers can be addded by implementing the `IProvider` and `IPublisher` interfaces and calling the appropriate extension methods on AddConfigurationService:
+Custom implementations of storage providers and publishers can be added by implementing the `IProvider` and `IPublisher` interfaces and calling the appropriate extension methods on AddConfigurationService:
 
 ```csharp
 services.AddConfigurationService()
@@ -159,7 +159,7 @@ configuration = new ConfigurationBuilder()
 #### Configuration Soruce Options
 |  Property  | Description |
 |:-----------|:------------|
-|ConfigurationName|Path or name of the configuration file relative to the configuration provider.|
+|ConfigurationName|Path or name of the configuration file relative to the configuration provider. This value should match the value specified in the list returned by the `configuration/` endpoint.|
 |ConfigurationServiceUri|Configuration service endpoint.|
 |Optional|Determines if loading the file is optional.|
 |ReloadOnChange|Determines whether the source will be loaded if the underlying file changes.|
