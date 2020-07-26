@@ -105,6 +105,9 @@ services.AddConfigurationService()
 |Path|Path to the configuration files.|
 |SearchPattern|The search string to use as a filter against the names of files. Defaults to no filter (*).|
 |IncludeSubdirectories|Includes the current directory and all its subdirectories. Defaults to `false`.|
+|Username|Username for authentication.|
+|Password|Password for authentication.|
+|Domain|Domain for authentication.|
 
 ```csharp
 services.AddConfigurationService()
@@ -168,3 +171,5 @@ configuration = new ConfigurationBuilder()
 
 ## Samples
 Samples of both host and client implementations can be viewed at [Samples](https://github.com/jamespratt/configuration-service/tree/master/samples).
+
+[![Build history](https://buildstats.info/github/chart/jamespratt/configuration-service)](https://github.com/jamespratt/configuration-service/actions?query=workflow%3Arelease)
