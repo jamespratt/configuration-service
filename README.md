@@ -14,7 +14,7 @@
 
 Configuration Service is a remote configuration service for .NET Core.  Configuration for fleets of applications, services, and containerized micro-services can be updated immediately without the need to redeploy or restart. Configuration Service uses a client/server pub/sub architecture to notify subscribed clients of configuration changes as they happen.  Configuration can be injected using the standard options pattern with `IOptions`, `IOptionsMonitor` or `IOptionsSnapshot`.
 
-Configuration Service currently supports hosting configuration with either git or a file system and supports publishing changes with Redis or RabbitMQ publish/subscribe.  File types supported are .json, .yaml, .xml and .ini.
+Configuration Service currently supports hosting configuration with either git or a file system and supports publishing changes with Redis, NATS or RabbitMQ publish/subscribe.  File types supported are .json, .yaml, .xml and .ini.
 
 [![Configuration Service Diagram](https://github.com/jamespratt/configuration-service/blob/master/images/configuration-service.png)](#about-configuration-service)
 
@@ -24,6 +24,7 @@ Configuration Service currently supports hosting configuration with either git o
 * Client easily integrates into any .NET Standard 2.0 application using the standard `ConfigurationBuilder` pattern.
 * Client encapsulates real-time configuration updates.
 * Support for git and file system based storage.
+* Support for pub/sub with Redis, NATS and RabbitMQ.
 * Support for .json, .yaml, .xml and .ini configuration files.
 * Inject configuration with `IOptionsMonitor` or `IOptionsSnapshot` to access configuration changes.
 
@@ -127,8 +128,8 @@ Custom implementations of storage providers and publishers can be added by imple
 
 ```csharp
 services.AddConfigurationService()
-    .AddCustomProvider(new CustomStorageProvider())
-    .AddCustomPublisher(new CustomPublisher());
+    .AddProvider(new CustomStorageProvider())
+    .AddPublisher(new CustomPublisher());
 ```
 
 ## Adding the Configuration Service Client
