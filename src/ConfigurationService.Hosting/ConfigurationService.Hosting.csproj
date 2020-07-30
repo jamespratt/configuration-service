@@ -5,7 +5,7 @@
       Contains the hosted service, storage providers and publisher components for Configuration Service. Configuration Service is an remote configuration service for .NET Core.
     </Description>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>0.4.3</Version>
+    <Version>0.4.4</Version>
     <Authors>James Pratt</Authors>
     <AssemblyName>ConfigurationService.Hosting</AssemblyName>
     <PackageId>ConfigurationService.Hosting</PackageId>
@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="LibGit2Sharp" Version="0.26.2" />
+    <PackageReference Include="NATS.Client" Version="0.10.1" />
     <PackageReference Include="RabbitMQ.Client" Version="6.1.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.1.58" />
   </ItemGroup>

@@ -40,7 +40,7 @@ namespace ConfigurationService.Client.Subscribers.Redis
             CreateConnection(configurationOptions);
         }
 
-        public void Subscribe(string topic, Action<object> handler)
+        public void Subscribe(string topic, Action<string> handler)
         {
             _logger.LogInformation("Subscribing to Redis channel '{topic}'.", topic);
 

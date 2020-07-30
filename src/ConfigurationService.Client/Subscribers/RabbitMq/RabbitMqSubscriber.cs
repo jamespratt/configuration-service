@@ -48,7 +48,7 @@ namespace ConfigurationService.Client.Subscribers.RabbitMq
             _channel.ExchangeDeclare(_exchangeName, ExchangeType.Fanout);
         }
 
-        public void Subscribe(string topic, Action<object> handler)
+        public void Subscribe(string topic, Action<string> handler)
         {
             var routingKey = topic;
 

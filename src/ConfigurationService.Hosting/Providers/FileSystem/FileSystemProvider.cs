@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -51,8 +50,10 @@ namespace ConfigurationService.Hosting.Providers.FileSystem
             {
                 var credentials = new NetworkCredential(_providerOptions.Username, _providerOptions.Password, _providerOptions.Domain);
                 var uri = new Uri(_providerOptions.Path);
-                var credentialCache = new CredentialCache();
-                credentialCache.Add(new Uri($"{uri.Scheme}://{uri.Host}"), "Basic", credentials);
+                _ = new CredentialCache
+                {
+                    {new Uri($"{uri.Scheme}://{uri.Host}"), "Basic", credentials}
+                };
             }
 
             _fileSystemWatcher = new FileSystemWatcher

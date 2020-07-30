@@ -6,6 +6,6 @@ namespace ConfigurationService.Client
     {
         string Name { get; }
 
-        void Subscribe(string topic, Action<object> handler);
+        void Subscribe(string topic, Action<string> handler);
     }
 }

@@ -3,9 +3,11 @@ using ConfigurationService.Hosting.Providers;
 using ConfigurationService.Hosting.Providers.FileSystem;
 using ConfigurationService.Hosting.Providers.Git;
 using ConfigurationService.Hosting.Publishers;
+using ConfigurationService.Hosting.Publishers.Nats;
 using ConfigurationService.Hosting.Publishers.RabbitMq;
 using ConfigurationService.Hosting.Publishers.Redis;
 using Microsoft.Extensions.DependencyInjection;
+using NATS.Client;
 using StackExchange.Redis;
 
 namespace ConfigurationService.Hosting
@@ -94,7 +96,7 @@ namespace ConfigurationService.Hosting
         /// <param name="provider">The custom implementation of <see cref="IProvider"/>.</param>
         /// <returns>An <see cref="IConfigurationServiceBuilder"/> that can be used to further configure the 
         /// ConfigurationService services.</returns>
-        public static IConfigurationServiceBuilder AddCustomProvider(this IConfigurationServiceBuilder builder, IProvider provider)
+        public static IConfigurationServiceBuilder AddProvider(this IConfigurationServiceBuilder builder, IProvider provider)
         {
             if (builder == null)
             {
@@ -195,13 +197,41 @@ namespace ConfigurationService.Hosting
         }
 
         /// <summary>
+        /// Adds Redis as the configuration publisher.
+        /// </summary>
+        /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
+        /// <param name="configure">Configure options for the NATS connection.</param>
+        /// <returns>An <see cref="IConfigurationServiceBuilder"/> that can be used to further configure the 
+        /// ConfigurationService services.</returns>
+        public static IConfigurationServiceBuilder AddNatsPublisher(this IConfigurationServiceBuilder builder, Action<Options> configure)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (configure == null)
+            {
+                throw new ArgumentNullException(nameof(configure));
+            }
+
+            var options = ConnectionFactory.GetDefaultOptions();
+            configure(options);
+
+            builder.Services.AddSingleton(options);
+            builder.Services.AddSingleton<IPublisher, NatsPublisher>();
+
+            return builder;
+        }
+
+        /// <summary>
         /// Adds a custom configuration publisher.
         /// </summary>
         /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
         /// <param name="publisher">The custom implementation of <see cref="IPublisher"/>.</param>
         /// <returns>An <see cref="IConfigurationServiceBuilder"/> that can be used to further configure the 
         /// ConfigurationService services.</returns>
-        public static IConfigurationServiceBuilder AddCustomPublisher(this IConfigurationServiceBuilder builder, IPublisher publisher)
+        public static IConfigurationServiceBuilder AddPublisher(this IConfigurationServiceBuilder builder, IPublisher publisher)
         {
             if (builder == null)
             {
