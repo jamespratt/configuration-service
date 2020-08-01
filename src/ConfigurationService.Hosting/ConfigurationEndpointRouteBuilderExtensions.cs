@@ -42,7 +42,7 @@ namespace ConfigurationService.Hosting
 
             return endpointRouteBuilder.MapGet(pattern, async context =>
             {
-                var files = provider.ListAllFiles();
+                var files = await provider.ListPaths();
                 var json = JsonSerializer.Serialize(files);
 
                 context.Response.ContentType = "application/json; charset=UTF-8";
@@ -60,7 +60,7 @@ namespace ConfigurationService.Hosting
                 var name = context.GetRouteValue("name")?.ToString();
                 name = WebUtility.UrlDecode(name);
 
-                var bytes = await provider.GetFile(name);
+                var bytes = await provider.GetConfiguration(name);
 
                 if (bytes == null)
                 {

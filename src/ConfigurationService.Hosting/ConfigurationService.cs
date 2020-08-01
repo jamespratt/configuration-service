@@ -33,7 +33,7 @@ namespace ConfigurationService.Hosting
 
             _provider.Initialize();
 
-            var files = _provider.ListAllFiles();
+            var files = await _provider.ListPaths();
 
             await PublishChanges(files);
 

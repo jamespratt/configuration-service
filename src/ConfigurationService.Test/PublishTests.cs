@@ -86,8 +86,8 @@ namespace ConfigurationService.Test
         private IProvider SetupStorageProvider()
         {
             var storageProvider = Substitute.For<IProvider>();
-            storageProvider.ListAllFiles().Returns(ListRandomFiles(1));
-            storageProvider.GetFile(Arg.Any<string>()).Returns(name => Encoding.UTF8.GetBytes($"{{ \"name\": \"{name}\" }}"));
+            storageProvider.ListPaths().Returns(ListRandomFiles(1));
+            storageProvider.GetConfiguration(Arg.Any<string>()).Returns(name => Encoding.UTF8.GetBytes($"{{ \"name\": \"{name}\" }}"));
             return storageProvider;
         }
 

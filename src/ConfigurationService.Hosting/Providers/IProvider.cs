@@ -13,10 +13,10 @@ namespace ConfigurationService.Hosting.Providers
 
         void Initialize();
 
-        Task<byte[]> GetFile(string fileName);
+        Task<byte[]> GetConfiguration(string name);
 
-        Task<string> GetHash(string fileName);
+        Task<string> GetHash(string name);
 
-        IEnumerable<string> ListAllFiles();
+        Task<IEnumerable<string>> ListPaths();
     }
 }
