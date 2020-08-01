@@ -92,7 +92,7 @@ namespace ConfigurationService.Client
                     _logger.LogInformation("Received remote configuration change subscription for configuration '{ConfigurationName}' with hash {message}. " +
                                            "Current hash is {Hash}.", source.ConfigurationName, message, Hash);
 
-                    if (message != null && message.ToString().Equals(Hash, StringComparison.OrdinalIgnoreCase))
+                    if (message != null && message.Equals(Hash, StringComparison.OrdinalIgnoreCase))
                     {
                         _logger.LogInformation("Configuration '{ConfigurationName}' current hash {Hash} matches new hash. " +
                                                "Configuration will not be updated.", source.ConfigurationName, Hash);
@@ -117,7 +117,7 @@ namespace ConfigurationService.Client
                     throw ex;
                 }
             }
-        }).ConfigureAwait(false).GetAwaiter().GetResult();
+        }).GetAwaiter().GetResult();
 
         public void Dispose()
         {
