@@ -15,7 +15,7 @@ namespace ConfigurationService.Hosting.Providers.Git
         private readonly ILogger<GitProvider> _logger;
 
         private readonly GitProviderOptions _providerOptions;
-        private readonly CredentialsHandler _credentialsHandler;
+        private CredentialsHandler _credentialsHandler;
 
         public string Name => "Git";
 
@@ -33,22 +33,6 @@ namespace ConfigurationService.Hosting.Providers.Git
             {
                 throw new ArgumentNullException(nameof(_providerOptions.RepositoryUrl), $"{nameof(_providerOptions.RepositoryUrl)} cannot be NULL or empty.");
             }
-
-            if (string.IsNullOrWhiteSpace(_providerOptions.Username))
-            {
-                throw new ArgumentNullException(nameof(_providerOptions.Username), $"{nameof(_providerOptions.Username)} cannot be NULL or empty.");
-            }
-
-            if (string.IsNullOrWhiteSpace(_providerOptions.Password))
-            {
-                throw new ArgumentNullException(nameof(_providerOptions.Password), $"{nameof(_providerOptions.Password)} cannot be NULL or empty.");
-            }
-
-            _credentialsHandler = (url, user, cred) => new UsernamePasswordCredentials
-            {
-                Username = _providerOptions.Username,
-                Password = _providerOptions.Password
-            };
         }
 
         public async Task Watch(Func<IEnumerable<string>, Task> onChange, CancellationToken cancellationToken = default)
@@ -113,6 +97,15 @@ namespace ConfigurationService.Hosting.Providers.Git
                 _logger.LogInformation("Creating directory {LocalPath}.", _providerOptions.LocalPath);
 
                 Directory.CreateDirectory(_providerOptions.LocalPath);
+            }
+
+            if (_providerOptions.Username != null && _providerOptions.Password != null)
+            {
+                _credentialsHandler = (url, user, cred) => new UsernamePasswordCredentials
+                {
+                    Username = _providerOptions.Username,
+                    Password = _providerOptions.Password
+                };
             }
 
             var cloneOptions = new CloneOptions
