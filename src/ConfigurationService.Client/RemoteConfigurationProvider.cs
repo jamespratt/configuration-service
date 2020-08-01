@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace ConfigurationService.Client
 {
-    public class RemoteConfigurationProvider : ConfigurationProvider, IDisposable
+    internal class RemoteConfigurationProvider : ConfigurationProvider, IDisposable
     {
         private readonly ILogger _logger;
 

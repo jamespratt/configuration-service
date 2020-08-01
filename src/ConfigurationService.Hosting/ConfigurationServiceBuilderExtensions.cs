@@ -117,7 +117,7 @@ namespace ConfigurationService.Hosting
         /// Adds RabbitMQ as the configuration publisher.
         /// </summary>
         /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
-        /// <param name="configure">Configure options for the Redis multiplexer.</param>
+        /// <param name="configure">Configure options for the RabbitMQ publisher.</param>
         /// <returns>An <see cref="IConfigurationServiceBuilder"/> that can be used to further configure the 
         /// ConfigurationService services.</returns>
         public static IConfigurationServiceBuilder AddRabbitMqPublisher(this IConfigurationServiceBuilder builder, Action<RabbitMqOptions> configure)
@@ -197,7 +197,7 @@ namespace ConfigurationService.Hosting
         }
 
         /// <summary>
-        /// Adds Redis as the configuration publisher.
+        /// Adds NATS as the configuration publisher.
         /// </summary>
         /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
         /// <param name="configure">Configure options for the NATS connection.</param>

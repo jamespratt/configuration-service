@@ -2,6 +2,7 @@
 using System.IO;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
+using RedisOptions = StackExchange.Redis.ConfigurationOptions;
 
 namespace ConfigurationService.Client.Subscribers.Redis
 {
@@ -22,13 +23,13 @@ namespace ConfigurationService.Client.Subscribers.Redis
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            var configurationOptions = ConfigurationOptions.Parse(configuration);
+            var configurationOptions = RedisOptions.Parse(configuration);
 
             CreateConnection(configurationOptions);
 
         }
 
-        public RedisSubscriber(ConfigurationOptions configurationOptions)
+        public RedisSubscriber(RedisOptions configurationOptions)
         {
             _logger = Logger.CreateLogger<RedisSubscriber>();
 
@@ -57,7 +58,7 @@ namespace ConfigurationService.Client.Subscribers.Redis
             _logger.LogInformation("Subscribed to Redis endpoint {endpoint} for channel '{channel}'.", endpoint, channel);
         }
 
-        private void CreateConnection(ConfigurationOptions configurationOptions)
+        private void CreateConnection(RedisOptions configurationOptions)
         {
             using (var writer = new StringWriter())
             {

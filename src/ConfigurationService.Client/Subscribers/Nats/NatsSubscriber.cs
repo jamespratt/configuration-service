@@ -37,7 +37,7 @@ namespace ConfigurationService.Client.Subscribers.Nats
         {
             _logger.LogInformation("Subscribing to NATS subject '{subject}'.", subject);
 
-            _connection.SubscribeAsync(subject, (sender, args) => 
+            _connection.SubscribeAsync(subject, (sender, args) =>
             {
                 _logger.LogInformation("Received subscription on NATS subject '{subject}'.", subject);
 

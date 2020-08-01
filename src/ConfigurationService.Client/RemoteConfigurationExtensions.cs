@@ -9,21 +9,25 @@ namespace ConfigurationService.Client
         /// Adds a remote configuration source.
         /// </summary>
         /// <param name="builder">The <see cref="IConfigurationBuilder"/> to add to.</param>
-        /// <param name="configureSource">Configures the source.</param>
+        /// <param name="configure">Configures the source.</param>
         /// <returns></returns>
-        public static IConfigurationBuilder AddRemoteSource(this IConfigurationBuilder builder, Action<RemoteConfigurationSource> configureSource)
+        public static IConfigurationBuilder AddRemoteConfiguration(this IConfigurationBuilder builder, Action<RemoteConfigurationOptions> configure)
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            if (configureSource == null)
+            if (configure == null)
             {
-                throw new ArgumentNullException(nameof(configureSource));
+                throw new ArgumentNullException(nameof(configure));
             }
 
-            return builder.Add(configureSource);
+            var options = new RemoteConfigurationOptions();
+            configure(options);
+
+            var remoteBuilder = new RemoteConfigurationBuilder(builder, options);
+            return remoteBuilder;
         }
     }
 }
