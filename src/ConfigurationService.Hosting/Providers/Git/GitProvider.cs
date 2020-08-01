@@ -60,7 +60,7 @@ namespace ConfigurationService.Hosting.Providers.Git
                     List<string> files;
 
                     var task = Task.Run(ListChangedFiles, cancellationToken);
-                    // The git diff operation can sometimes hang.  Force to complete after a minute.
+                    // The git fetch operation can sometimes hang.  Force to complete after a minute.
                     if (task.Wait(TimeSpan.FromSeconds(60)))
                     {
                         files = task.Result.ToList();

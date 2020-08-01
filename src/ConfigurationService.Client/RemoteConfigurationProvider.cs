@@ -148,7 +148,7 @@ namespace ConfigurationService.Client
 
         private async Task LoadAsync()
         {
-            Data = await RequestConfigurationAsync();
+            Data = await RequestConfigurationAsync().ConfigureAwait(false);
         }
 
         private async Task<IDictionary<string, string>> RequestConfigurationAsync()
@@ -159,14 +159,14 @@ namespace ConfigurationService.Client
 
             try
             {
-                using (var response = await HttpClient.GetAsync(encodedConfigurationName))
+                using (var response = await HttpClient.GetAsync(encodedConfigurationName).ConfigureAwait(false))
                 {
                     _logger.LogInformation("Received response status code {StatusCode} from endpoint for configuration '{ConfigurationName}'.",
                         response.StatusCode, _source.ConfigurationName);
 
                     if (response.IsSuccessStatusCode)
                     {
-                        using (var stream = await response.Content.ReadAsStreamAsync())
+                        using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
                         {
                             _logger.LogInformation("Parsing remote configuration response stream ({Length:N0} bytes) for configuration '{ConfigurationName}'.",
                                 stream.Length, _source.ConfigurationName);
