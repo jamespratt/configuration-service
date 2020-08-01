@@ -1,10 +1,9 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ConfigurationService.Client;
-using ConfigurationService.Client.Subscribers.Redis;
+using ConfigurationService.Client.Parsers;
 
 namespace ConfigurationService.Samples.Client
 {
@@ -23,14 +22,24 @@ namespace ConfigurationService.Samples.Client
 
             var configuration = new ConfigurationBuilder()
                 .AddConfiguration(localConfiguration)
-                .AddRemoteSource(s => 
+                .AddRemoteConfiguration(o =>
                 {
-                    s.ConfigurationName = localConfiguration["ConfigurationName"];
-                    s.ConfigurationServiceUri = localConfiguration["ConfigurationServiceUri"];
-                    s.Subscriber = () => new RedisSubscriber(localConfiguration["SubscriberConfiguration"]);
-                    s.Optional = false;
-                    s.ReloadOnChange = true;
-                    s.LoggerFactory = loggerFactory;
+                    o.ServiceUri = "http://localhost:5000/configuration/";
+                    o.AddConfiguration(c =>
+                    {
+                        c.ConfigurationName = "test.json";
+                        c.ReloadOnChange = true;
+                        c.Optional = false;
+                    });
+                    o.AddConfiguration(c =>
+                    {
+                        c.ConfigurationName = "test.yaml";
+                        c.ReloadOnChange = true;
+                        c.Optional = false;
+                        c.Parser = new YamlConfigurationFileParser();
+                    });
+                    o.AddRedisSubscriber("localhost:6379");
+                    o.AddLoggerFactory(loggerFactory);
                 })
                 .Build();
 
@@ -42,9 +51,7 @@ namespace ConfigurationService.Samples.Client
 
             var configWriter = serviceProvider.GetService<ConfigWriter>();
 
-            var cts = new CancellationTokenSource();
-            await configWriter.Write(cts.Token);
-            cts.Dispose();
+            await configWriter.Write();
         }
     }
 }
