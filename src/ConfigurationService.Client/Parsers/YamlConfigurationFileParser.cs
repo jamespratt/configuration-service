@@ -7,7 +7,7 @@ using YamlDotNet.RepresentationModel;
 
 namespace ConfigurationService.Client.Parsers
 {
-    internal class YamlConfigurationFileParser : IConfigurationParser
+    public class YamlConfigurationFileParser : IConfigurationParser
     {
         private readonly IDictionary<string, string> _data = new SortedDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         private readonly Stack<string> _context = new Stack<string>();

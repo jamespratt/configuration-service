@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace ConfigurationService.Client
 {
-    public class RemoteConfigurationProvider : ConfigurationProvider, IDisposable
+    internal class RemoteConfigurationProvider : ConfigurationProvider, IDisposable
     {
         private readonly ILogger _logger;
 
@@ -92,7 +92,7 @@ namespace ConfigurationService.Client
                     _logger.LogInformation("Received remote configuration change subscription for configuration '{ConfigurationName}' with hash {message}. " +
                                            "Current hash is {Hash}.", source.ConfigurationName, message, Hash);
 
-                    if (message != null && message.ToString().Equals(Hash, StringComparison.OrdinalIgnoreCase))
+                    if (message != null && message.Equals(Hash, StringComparison.OrdinalIgnoreCase))
                     {
                         _logger.LogInformation("Configuration '{ConfigurationName}' current hash {Hash} matches new hash. " +
                                                "Configuration will not be updated.", source.ConfigurationName, Hash);
@@ -117,7 +117,7 @@ namespace ConfigurationService.Client
                     throw ex;
                 }
             }
-        }).ConfigureAwait(false).GetAwaiter().GetResult();
+        }).GetAwaiter().GetResult();
 
         public void Dispose()
         {
@@ -148,7 +148,7 @@ namespace ConfigurationService.Client
 
         private async Task LoadAsync()
         {
-            Data = await RequestConfigurationAsync();
+            Data = await RequestConfigurationAsync().ConfigureAwait(false);
         }
 
         private async Task<IDictionary<string, string>> RequestConfigurationAsync()
@@ -159,14 +159,14 @@ namespace ConfigurationService.Client
 
             try
             {
-                using (var response = await HttpClient.GetAsync(encodedConfigurationName))
+                using (var response = await HttpClient.GetAsync(encodedConfigurationName).ConfigureAwait(false))
                 {
                     _logger.LogInformation("Received response status code {StatusCode} from endpoint for configuration '{ConfigurationName}'.",
                         response.StatusCode, _source.ConfigurationName);
 
                     if (response.IsSuccessStatusCode)
                     {
-                        using (var stream = await response.Content.ReadAsStreamAsync())
+                        using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
                         {
                             _logger.LogInformation("Parsing remote configuration response stream ({Length:N0} bytes) for configuration '{ConfigurationName}'.",
                                 stream.Length, _source.ConfigurationName);

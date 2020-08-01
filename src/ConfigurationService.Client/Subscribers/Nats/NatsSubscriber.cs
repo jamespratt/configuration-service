@@ -33,13 +33,11 @@ namespace ConfigurationService.Client.Subscribers.Nats
             _connection = connectionFactory.CreateConnection(options);
         }
 
-        public void Subscribe(string topic, Action<string> handler)
+        public void Subscribe(string subject, Action<string> handler)
         {
-            var subject = topic;
-
             _logger.LogInformation("Subscribing to NATS subject '{subject}'.", subject);
 
-            _connection.SubscribeAsync(subject, (sender, args) => 
+            _connection.SubscribeAsync(subject, (sender, args) =>
             {
                 _logger.LogInformation("Received subscription on NATS subject '{subject}'.", subject);
 

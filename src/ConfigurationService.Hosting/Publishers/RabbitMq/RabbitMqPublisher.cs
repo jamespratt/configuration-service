@@ -47,12 +47,12 @@ namespace ConfigurationService.Hosting.Publishers.RabbitMq
 
         }
 
-        public Task Publish(string topic, string message)
+        public Task Publish(string routingKey, string message)
         {
-            _logger.LogInformation("Publishing message with routing key {topic}.", topic);
+            _logger.LogInformation("Publishing message with routing key {routingKey}.", routingKey);
 
             var body = Encoding.UTF8.GetBytes(message);
-            _channel.BasicPublish(_exchangeName, topic, null, body);
+            _channel.BasicPublish(_exchangeName, routingKey, null, body);
 
             return Task.CompletedTask;
         }

@@ -8,17 +8,17 @@ namespace ConfigurationService.Client
     /// <summary>
     /// Represents a remote file as an <see cref="IConfigurationSource"/>.
     /// </summary>
-    public class RemoteConfigurationSource : IConfigurationSource
+    internal class RemoteConfigurationSource : IConfigurationSource
     {
-        /// <summary>
-        /// Name or path of the configuration file relative to the configuration provider path.
-        /// </summary>
-        public string ConfigurationName { get; set; }
-
         /// <summary>
         /// Configuration service endpoint.
         /// </summary>
         public string ConfigurationServiceUri { get; set; }
+
+        /// <summary>
+        /// Name or path of the configuration file relative to the configuration provider path.
+        /// </summary>
+        public string ConfigurationName { get; set; }
 
         /// <summary>
         /// Determines if loading the file is optional. Defaults to false>.
