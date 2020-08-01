@@ -35,15 +35,15 @@ namespace ConfigurationService.Hosting.Publishers.Redis
             _connection.ConnectionRestored += (sender, args) => { _logger.LogInformation("Redis connection restored."); };
         }
 
-        public async Task Publish(string topic, string message)
+        public async Task Publish(string channel, string message)
         {
-            _logger.LogInformation("Publishing message to channel {topic}.", topic);
+            _logger.LogInformation("Publishing message to channel {channel}.", channel);
 
             var publisher = _connection.GetSubscriber();
 
-            var clientCount = await publisher.PublishAsync(topic, message);
+            var clientCount = await publisher.PublishAsync(channel, message);
 
-            _logger.LogInformation("Message to channel {topic} was received by {clientCount} clients.", topic, clientCount);
+            _logger.LogInformation("Message to channel {channel} was received by {clientCount} clients.", channel, clientCount);
         }
     }
 }

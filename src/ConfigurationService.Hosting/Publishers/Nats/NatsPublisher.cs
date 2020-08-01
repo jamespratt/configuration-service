@@ -33,13 +33,13 @@ namespace ConfigurationService.Hosting.Publishers.Nats
             _connection = connectionFactory.CreateConnection(options);
         }
 
-        public Task Publish(string topic, string message)
+        public Task Publish(string subject, string message)
         {
-            _logger.LogInformation("Publishing message to with subject {topic}.", topic);
+            _logger.LogInformation("Publishing message to with subject {subject}.", subject);
 
             var data = Encoding.UTF8.GetBytes(message);
 
-            _connection.Publish(topic, data);
+            _connection.Publish(subject, data);
 
             return Task.CompletedTask;
         }
