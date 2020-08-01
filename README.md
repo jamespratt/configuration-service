@@ -133,7 +133,7 @@ services.AddConfigurationService()
 ```
 
 ## Adding the Configuration Service Client
-The Configuration Service client can be configured by adding `AddRemoteSource` to the standard configuration builder. In the following example, remote json configuration is added and a Redis endpoint is specified for configuration change subscription.  Local configuration can be read for settings for the remote source by using multiple instances of the configuration. 
+The Configuration Service client can be configured by adding `AddRemoteSource` to the standard configuration builder. In the following example, remote json configuration is added and a Redis endpoint is specified for configuration change subscription.  Local configuration can be read for settings for the remote source by using multiple instances of  configuration builder. 
 
 ```csharp
 var loggerFactory = LoggerFactory.Create(builder =>
@@ -147,14 +147,24 @@ IConfiguration configuration = new ConfigurationBuilder()
 
 configuration = new ConfigurationBuilder()
     .AddConfiguration(configuration)
-    .AddRemoteSource(s => 
+    .AddRemoteConfiguration(o =>
     {
-        s.ConfigurationName = "text.json";
-        s.ConfigurationServiceUri = "http://localhost:5000/configuration/";
-        s.Subscriber = () => new RedisSubscriber("localhost:6379");
-        s.Optional = false;
-        s.ReloadOnChange = true;
-        s.LoggerFactory = loggerFactory;
+        o.ServiceUri = "http://localhost:5000/configuration/";
+        o.AddConfiguration(c =>
+        {
+            c.ConfigurationName = "test.json";
+            c.ReloadOnChange = true;
+            c.Optional = false;
+        });
+        o.AddConfiguration(c =>
+        {
+            c.ConfigurationName = "test.yaml";
+            c.ReloadOnChange = true;
+            c.Optional = false;
+            c.Parser = new YamlConfigurationFileParser();
+        });
+        o.AddRedisSubscriber("localhost:6379");
+        o.AddLoggerFactory(loggerFactory);
     })
     .Build();
 ```
@@ -162,15 +172,15 @@ configuration = new ConfigurationBuilder()
 #### Configuration Soruce Options
 |  Property  | Description |
 |:-----------|:------------|
-|ConfigurationName|Path or name of the configuration file relative to the configuration provider. This value should match the value specified in the list returned by the `configuration/` endpoint.|
-|ConfigurationServiceUri|Configuration service endpoint.|
-|Optional|Determines if loading the file is optional.|
-|ReloadOnChange|Determines whether the source will be loaded if the underlying file changes.|
+|ServiceUri|Configuration service endpoint.|
 |HttpMessageHandler|The optional `HttpMessageHandler` for the `HttpClient`.|
 |RequestTimeout|The timeout for the `HttpClient` request to the configuration server. Defaults to 60 seconds.|
-|Parser|The type used to parse the remote configuration file. The client will attempt to resolve this from the file extension of `ConfigurationName` if not specified.<br /><br />Supported Types: <ul><li>`JsonConfigurationFileParser`</li><li>`YamlConfigurationFileParser`</li><li>`XmlConfigurationFileParser`</li><li>`IniConfigurationFileParser`</li></ul>|
-|Subscriber|Delegate to create the type of `ISubscriber` used to subscribe to published configuration messages.|
 |LoggerFactory|The type used to configure the logging system and create instances of `ILogger`. Defaults to `NullLoggerFactory`.|
+|**Configuration**||
+|ConfigurationName|Path or name of the configuration file relative to the configuration provider. This value should match the value specified in the list returned by the `configuration/` endpoint.|
+|Optional|Determines if loading the file is optional.|
+|ReloadOnChange|Determines whether the source will be loaded if the underlying file changes.|
+|Parser|The type used to parse the remote configuration file. The client will attempt to resolve this from the file extension of `ConfigurationName` if not specified.<br /><br />Supported Types: <ul><li>`JsonConfigurationFileParser`</li><li>`YamlConfigurationFileParser`</li><li>`XmlConfigurationFileParser`</li><li>`IniConfigurationFileParser`</li></ul>|
 
 ## Samples
 Samples of both host and client implementations can be viewed at [Samples](https://github.com/jamespratt/configuration-service/tree/master/samples).
