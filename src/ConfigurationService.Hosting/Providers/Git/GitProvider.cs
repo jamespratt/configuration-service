@@ -126,27 +126,27 @@ namespace ConfigurationService.Hosting.Providers.Git
             _logger.LogInformation("Current HEAD is [{hash}] '{MessageShort}'.", hash, repo.Head.Tip.MessageShort);
         }
 
-        public async Task<byte[]> GetFile(string fileName)
+        public async Task<byte[]> GetConfiguration(string name)
         {
-            string path = Path.Combine(_providerOptions.LocalPath, fileName);
+            string path = Path.Combine(_providerOptions.LocalPath, name);
 
             if (!File.Exists(path))
             {
-                _logger.LogInformation("File does not exit at {path}.", path);
+                _logger.LogInformation("File does not exist at {path}.", path);
                 return null;
             }
 
             return await File.ReadAllBytesAsync(path);
         }
 
-        public async Task<string> GetHash(string fileName)
+        public async Task<string> GetHash(string name)
         {
-            var bytes = await GetFile(fileName);
+            var bytes = await GetConfiguration(name);
 
             return Hasher.CreateHash(bytes);
         }
 
-        public IEnumerable<string> ListAllFiles()
+        public Task<IEnumerable<string>> ListPaths()
         {
             _logger.LogInformation("Listing files at {LocalPath}.", _providerOptions.LocalPath);
 
@@ -169,10 +169,10 @@ namespace ConfigurationService.Hosting.Providers.Git
 
             _logger.LogInformation("{Count} files found.", files.Count);
 
-            return files;
+            return Task.FromResult<IEnumerable<string>>(files);
         }
 
-        private IEnumerable<string> ListChangedFiles()
+        private async Task<IEnumerable<string>> ListChangedFiles()
         {
             Fetch();
 
@@ -205,7 +205,7 @@ namespace ConfigurationService.Hosting.Providers.Git
 
             UpdateLocal();
 
-            var filteredFiles = ListAllFiles();
+            var filteredFiles = await ListPaths();
             changedFiles = filteredFiles.Intersect(changedFiles).ToList();
 
             _logger.LogInformation("{Count} files changed.", changedFiles.Count);

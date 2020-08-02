@@ -68,27 +68,27 @@ namespace ConfigurationService.Hosting.Providers.FileSystem
             _fileSystemWatcher.Changed += FileSystemWatcher_Changed;
         }
 
-        public async Task<byte[]> GetFile(string fileName)
+        public async Task<byte[]> GetConfiguration(string name)
         {
-            string path = Path.Combine(_providerOptions.Path, fileName);
+            string path = Path.Combine(_providerOptions.Path, name);
 
             if (!File.Exists(path))
             {
-                _logger.LogInformation("File does not exit at {path}.", path);
+                _logger.LogInformation("File does not exist at {path}.", path);
                 return null;
             }
 
             return await File.ReadAllBytesAsync(path);
         }
 
-        public async Task<string> GetHash(string fileName)
+        public async Task<string> GetHash(string name)
         {
-            var bytes = await GetFile(fileName);
+            var bytes = await GetConfiguration(name);
 
             return Hasher.CreateHash(bytes);
         }
 
-        public IEnumerable<string> ListAllFiles()
+        public Task<IEnumerable<string>> ListPaths()
         {
             _logger.LogInformation("Listing files at {Path}.", _providerOptions.Path);
 
@@ -98,7 +98,7 @@ namespace ConfigurationService.Hosting.Providers.FileSystem
 
             _logger.LogInformation("{Count} files found.", files.Count);
 
-            return files;
+            return Task.FromResult<IEnumerable<string>>(files);
         }
 
         private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)

@@ -42,11 +42,14 @@ namespace ConfigurationService.Hosting
 
             return endpointRouteBuilder.MapGet(pattern, async context =>
             {
-                var files = provider.ListAllFiles();
-                var json = JsonSerializer.Serialize(files);
+                var files = await provider.ListPaths();
+
+                context.Response.OnStarting(async () =>
+                {
+                    await JsonSerializer.SerializeAsync(context.Response.Body, files);
+                });
 
                 context.Response.ContentType = "application/json; charset=UTF-8";
-                await context.Response.WriteAsync(json);
                 await context.Response.Body.FlushAsync();
             });
         }
@@ -60,7 +63,7 @@ namespace ConfigurationService.Hosting
                 var name = context.GetRouteValue("name")?.ToString();
                 name = WebUtility.UrlDecode(name);
 
-                var bytes = await provider.GetFile(name);
+                var bytes = await provider.GetConfiguration(name);
 
                 if (bytes == null)
                 {

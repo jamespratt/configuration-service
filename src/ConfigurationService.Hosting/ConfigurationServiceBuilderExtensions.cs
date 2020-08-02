@@ -2,6 +2,7 @@
 using ConfigurationService.Hosting.Providers;
 using ConfigurationService.Hosting.Providers.FileSystem;
 using ConfigurationService.Hosting.Providers.Git;
+using ConfigurationService.Hosting.Providers.Vault;
 using ConfigurationService.Hosting.Publishers;
 using ConfigurationService.Hosting.Publishers.Nats;
 using ConfigurationService.Hosting.Publishers.RabbitMq;
@@ -85,6 +86,34 @@ namespace ConfigurationService.Hosting
 
             builder.Services.AddSingleton(options);
             builder.Services.AddSingleton<IProvider, FileSystemProvider>();
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Add Vault as the storage provider backend.
+        /// </summary>
+        /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
+        /// <param name="configure">Configure Vault provider options.</param>
+        /// <returns>An <see cref="IConfigurationServiceBuilder"/> that can be used to further configure the 
+        /// ConfigurationService services.</returns>
+        public static IConfigurationServiceBuilder AddVaultProvider(this IConfigurationServiceBuilder builder, Action<VaultProviderOptions> configure)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (configure == null)
+            {
+                throw new ArgumentNullException(nameof(configure));
+            }
+
+            var options = new VaultProviderOptions();
+            configure(options);
+
+            builder.Services.AddSingleton(options);
+            builder.Services.AddSingleton<IProvider, VaultProvider>();
 
             return builder;
         }

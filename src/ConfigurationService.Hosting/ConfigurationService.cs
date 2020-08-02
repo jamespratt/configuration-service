@@ -33,28 +33,28 @@ namespace ConfigurationService.Hosting
 
             _provider.Initialize();
 
-            var files = _provider.ListAllFiles();
+            var paths = await _provider.ListPaths();
 
-            await PublishChanges(files);
+            await PublishChanges(paths);
 
             await _provider.Watch(OnChange, cancellationToken);
 
             _logger.LogInformation("{Name} configuration watching for changes.", _provider.Name);
         }
 
-        public async Task OnChange(IEnumerable<string> files)
+        public async Task OnChange(IEnumerable<string> paths)
         {
             _logger.LogInformation("Changes were detected on the remote {Name} configuration provider.", _provider.Name);
 
-            files = files.ToList();
+            paths = paths.ToList();
 
-            if (files.Any())
+            if (paths.Any())
             {
-                await PublishChanges(files);
+                await PublishChanges(paths);
             }
         }
 
-        public async Task PublishChanges(IEnumerable<string> files)
+        public async Task PublishChanges(IEnumerable<string> paths)
         {
             if (_publisher == null)
             {
@@ -63,10 +63,10 @@ namespace ConfigurationService.Hosting
 
             _logger.LogInformation("Publishing changes...");
 
-            foreach (var filePath in files)
+            foreach (var path in paths)
             {
-                var hash = await _provider.GetHash(filePath);
-                await _publisher.Publish(filePath, hash);
+                var hash = await _provider.GetHash(path);
+                await _publisher.Publish(path, hash);
             }
         }
     }

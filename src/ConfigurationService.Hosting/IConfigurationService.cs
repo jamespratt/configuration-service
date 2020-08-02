@@ -8,8 +8,8 @@ namespace ConfigurationService.Hosting
     {
         Task InitializeProvider(CancellationToken cancellationToken = default);
 
-        Task OnChange(IEnumerable<string> files);
+        Task OnChange(IEnumerable<string> paths);
 
-        Task PublishChanges(IEnumerable<string> files);
+        Task PublishChanges(IEnumerable<string> paths);
     }
 }
