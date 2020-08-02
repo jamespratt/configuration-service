@@ -16,6 +16,7 @@ namespace ConfigurationService.Hosting.Providers.Vault
         private readonly VaultProviderOptions _providerOptions;
 
         private IVaultClient _vaultClient;
+        private readonly IDictionary<string, int> _secretVersions = new Dictionary<string, int>();
 
         public string Name => "Vault";
 
@@ -24,15 +25,62 @@ namespace ConfigurationService.Hosting.Providers.Vault
             _logger = logger;
             _providerOptions = providerOptions;
 
+            if (string.IsNullOrWhiteSpace(_providerOptions.ServerUri))
+            {
+                throw new ArgumentNullException(nameof(_providerOptions.ServerUri), $"{nameof(_providerOptions.ServerUri)} cannot be NULL or empty.");
+            }
+
             if (string.IsNullOrWhiteSpace(_providerOptions.Path))
             {
                 throw new ArgumentNullException(nameof(_providerOptions.Path), $"{nameof(_providerOptions.Path)} cannot be NULL or empty.");
             }
+
+            if (_providerOptions.AuthMethodInfo == null)
+            {
+                throw new ArgumentNullException(nameof(_providerOptions.AuthMethodInfo));
+            }
         }
 
-        public Task Watch(Func<IEnumerable<string>, Task> onChange, CancellationToken cancellationToken = default)
+        public async Task Watch(Func<IEnumerable<string>, Task> onChange, CancellationToken cancellationToken = default)
         {
-            return Task.CompletedTask;
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                try
+                {
+                    var changes = new List<string>();
+                    
+                    var paths = await ListPaths();
+
+                    foreach (var path in paths)
+                    {
+                        var metadata = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretMetadataAsync(path, _providerOptions.Path);
+
+                        _secretVersions.TryGetValue(path, out int version);
+
+                        if (version != metadata.Data.CurrentVersion)
+                        {
+                            changes.Add(path);
+
+                            _secretVersions[path] = metadata.Data.CurrentVersion;
+                        }
+                    }
+
+                    if (changes.Count > 0)
+                    {
+                        await onChange(changes);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "An unhandled exception occurred while attempting to poll for changes.");
+                }
+
+                var delayDate = DateTime.UtcNow.Add(_providerOptions.PollingInterval);
+
+                _logger.LogInformation("Next polling period will begin in {PollingInterval:c} at {delayDate}.", _providerOptions.PollingInterval, delayDate);
+
+                await Task.Delay(_providerOptions.PollingInterval, cancellationToken);
+            }
         }
 
         public void Initialize()
@@ -50,7 +98,7 @@ namespace ConfigurationService.Hosting.Providers.Vault
 
         public async Task<byte[]> GetConfiguration(string name)
         {
-            var secret = await _vaultClient.V1.Secrets.KeyValue.V1.ReadSecretAsync(name);
+            var secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(name, null, _providerOptions.Path);
 
             if (secret == null)
             {
@@ -58,7 +106,7 @@ namespace ConfigurationService.Hosting.Providers.Vault
                 return null;
             }
 
-            var bytes = JsonSerializer.SerializeToUtf8Bytes(secret);
+            var bytes = JsonSerializer.SerializeToUtf8Bytes(secret.Data.Data);
             return bytes;
         }
 
@@ -73,7 +121,7 @@ namespace ConfigurationService.Hosting.Providers.Vault
         {
             _logger.LogInformation("Listing paths at {Path}.", _providerOptions.Path);
 
-            var secret = await _vaultClient.V1.Secrets.KeyValue.V1.ReadSecretPathsAsync(_providerOptions.Path);
+            var secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretPathsAsync(null, _providerOptions.Path);
             var paths = secret.Data.Keys.ToList();
 
             _logger.LogInformation("{Count} paths found.", paths.Count);
