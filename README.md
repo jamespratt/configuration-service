@@ -8,13 +8,13 @@
 |**ConfigurationService.Hosting**|[![NuGet Badge ConfigurationService.Hosting](https://buildstats.info/nuget/ConfigurationService.Hosting)](https://www.nuget.org/packages/ConfigurationService.Hosting)
 |**ConfigurationService.Client**|[![NuGet Badge ConfigurationService.Client](https://buildstats.info/nuget/ConfigurationService.Client)](https://www.nuget.org/packages/ConfigurationService.Client)
 
-[![Join the chat at https://gitter.im/configuration-service/community](https://badges.gitter.im/configuration-service/community.svg)](https://gitter.im/configuration-service/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+<!-- [![Join the chat at https://gitter.im/configuration-service/community](https://badges.gitter.im/configuration-service/community.svg)](https://gitter.im/configuration-service/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) -->
 
 ## About Configuration Service
 
 Configuration Service is a remote configuration service for .NET Core.  Configuration for fleets of applications, services, and containerized micro-services can be updated immediately without the need to redeploy or restart. Configuration Service uses a client/server pub/sub architecture to notify subscribed clients of configuration changes as they happen.  Configuration can be injected using the standard options pattern with `IOptions`, `IOptionsMonitor` or `IOptionsSnapshot`.
 
-Configuration Service currently supports hosting configuration with either git or a file system and supports publishing changes with Redis, NATS or RabbitMQ publish/subscribe.  File types supported are .json, .yaml, .xml and .ini.
+Configuration Service currently supports hosting configuration with git, file system or Vault backends and supports publishing changes with Redis, NATS or RabbitMQ publish/subscribe.  File types supported are .json, .yaml, .xml and .ini.
 
 [![Configuration Service Diagram](https://github.com/jamespratt/configuration-service/blob/master/images/configuration-service.png)](#about-configuration-service)
 
@@ -23,7 +23,7 @@ Configuration Service currently supports hosting configuration with either git o
 * Server easily integrates into an ASP.NET Core application.
 * Client easily integrates into any .NET Standard 2.0 application using the standard `ConfigurationBuilder` pattern.
 * Client encapsulates real-time configuration updates.
-* Support for git and file system based storage.
+* Support for git, file system and Vault backend storage.
 * Support for pub/sub with Redis, NATS and RabbitMQ.
 * Support for .json, .yaml, .xml and .ini configuration files.
 * Inject configuration with `IOptionsMonitor` or `IOptionsSnapshot` to access configuration changes.
@@ -58,7 +58,6 @@ public void ConfigureServices(IServiceCollection services)
             c.LocalPath = "C:/local-repo";
         })
         .AddRedisPublisher("localhost:6379");
-        .AddRedisPublisher("localhost:6379");
 }
 ```
 
@@ -83,7 +82,7 @@ The configured host will expose two API endpoints:
 |Password|Password for authentication.|
 |Branch|The name of the branch to checkout. When unspecified the remote's default branch will be used instead.|
 |LocalPath|Local path to clone into.|
-|SearchPattern|The search string to use as a filter against the names of files. Defaults to no filter (*).|
+|SearchPattern|The search string to use as a filter against the names of files. Defaults to no filter (\*).|
 |PollingInterval|The interval to check for remote changes. Defaults to 60 seconds.|
 
 ```csharp
@@ -105,7 +104,7 @@ services.AddConfigurationService()
 |  Property  | Description |
 |:-----------|:------------|
 |Path|Path to the configuration files.|
-|SearchPattern|The search string to use as a filter against the names of files. Defaults to no filter (*).|
+|SearchPattern|The search string to use as a filter against the names of files. Defaults to no filter (\*).|
 |IncludeSubdirectories|Includes the current directory and all its subdirectories. Defaults to `false`.|
 |Username|Username for authentication.|
 |Password|Password for authentication.|
@@ -118,6 +117,25 @@ services.AddConfigurationService()
         c.Path = "C:/config";
         c.SearchPattern = "*.json";
         c.IncludeSubdirectories = true;
+    })
+    ...
+```
+
+#### Vault Provider Options
+|  Property  | Description |
+|:-----------|:------------|
+|ServerUri|The Vault Server Uri with port.|
+|Path|The path where the kv secrets engine is enabled.|
+|AuthMethodInfo|The auth method to be used to acquire a Vault token.|
+|PollingInterval|The interval to check for for remote changes. Defaults to 60 seconds.|
+
+```csharp
+services.AddConfigurationService()
+    .AddVaultProvider(c =>
+    {
+        c.ServerUri = "http://localhost:8200/";
+        c.Path = "secret/";
+        c.AuthMethodInfo = new TokenAuthMethodInfo("myToken");
     })
     ...
 ```
@@ -175,11 +193,16 @@ configuration = new ConfigurationBuilder()
 |HttpMessageHandler|The optional `HttpMessageHandler` for the `HttpClient`.|
 |RequestTimeout|The timeout for the `HttpClient` request to the configuration server. Defaults to 60 seconds.|
 |LoggerFactory|The type used to configure the logging system and create instances of `ILogger`. Defaults to `NullLoggerFactory`.|
-|**Configuration**||
+|**AddConfiguration**|Adds an individual configuration file.|
 |ConfigurationName|Path or name of the configuration file relative to the configuration provider. This value should match the value specified in the list returned by the `configuration/` endpoint.|
 |Optional|Determines if loading the file is optional.|
 |ReloadOnChange|Determines whether the source will be loaded if the underlying file changes.|
 |Parser|The type used to parse the remote configuration file. The client will attempt to resolve this from the file extension of `ConfigurationName` if not specified.<br /><br />Supported Types: <ul><li>`JsonConfigurationFileParser`</li><li>`YamlConfigurationFileParser`</li><li>`XmlConfigurationFileParser`</li><li>`IniConfigurationFileParser`</li></ul>|
+|**AddRedisSubscriber**|Adds Redis as the configuration subscriber.|
+|**AddNatsSubscriber**|Adds NATS as the configuration subscriber.|
+|**AddRabbitMqSubscriber**|Adds RabbitMQ as the configuration subscriber.|
+|**AddSubscriber**|Adds a custom configuration subscriber the implements `ISubscriber`.|
+|**AddLoggerFactory**|Adds the type used to configure the logging system and create instances of `ILogger`.|
 
 ## Samples
 Samples of both host and client implementations can be viewed at [Samples](https://github.com/jamespratt/configuration-service/tree/master/samples).
