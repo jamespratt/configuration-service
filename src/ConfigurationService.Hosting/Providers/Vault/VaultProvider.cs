@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -48,7 +49,7 @@ namespace ConfigurationService.Hosting.Providers.Vault
                 try
                 {
                     var changes = new List<string>();
-                    
+
                     var paths = await ListPaths();
 
                     foreach (var path in paths)
@@ -106,8 +107,9 @@ namespace ConfigurationService.Hosting.Providers.Vault
                 return null;
             }
 
-            var bytes = JsonSerializer.SerializeToUtf8Bytes(secret.Data.Data);
-            return bytes;
+            await using var stream = new MemoryStream();
+            await JsonSerializer.SerializeAsync(stream, secret.Data.Data);
+            return stream.ToArray();
         }
 
         public async Task<string> GetHash(string name)
