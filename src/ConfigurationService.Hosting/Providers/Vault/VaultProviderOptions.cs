@@ -14,7 +14,7 @@ namespace ConfigurationService.Hosting.Providers.Vault
         public string ServerUri { get; set; }
 
         /// <summary>
-        /// The location path where the secret needs to be read from.
+        /// The path where the kv secrets engine is enabled.
         /// </summary>
         public string Path { get; set; }
 
