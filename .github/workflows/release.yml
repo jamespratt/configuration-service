@@ -18,17 +18,11 @@ jobs:
       with:
         dotnet-version: 3.1.101
 
-    - name: Install dependencies ConfigurationService.Hosting
-      run: dotnet restore src/ConfigurationService.Hosting/ConfigurationService.Hosting.csproj
-
-    - name: Install dependencies ConfigurationService.Client
-      run: dotnet restore src/ConfigurationService.Client/ConfigurationService.Client.csproj
+    - name: Install dependencies
+      run: dotnet restore src/ConfigurationService.sln
       
-    - name: Build ConfigurationService.Hosting
-      run: dotnet build src/ConfigurationService.Hosting/ConfigurationService.Hosting.csproj --configuration Release --no-restore
-
-    - name: Build ConfigurationService.Client
-      run: dotnet build src/ConfigurationService.Client/ConfigurationService.Client.csproj --configuration Release --no-restore
+    - name: Build
+      run: dotnet build src/ConfigurationService.sln --configuration Release --no-restore
 
     - name: Test
       run: dotnet test src/ConfigurationService.sln --no-restore --logger "console;verbosity=normal"
