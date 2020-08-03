@@ -150,7 +150,7 @@ services.AddConfigurationService()
 ```
 
 ## Adding the Configuration Service Client
-The Configuration Service client can be configured by adding `AddRemoteSource` to the standard configuration builder. In the following example, remote json configuration is added and a Redis endpoint is specified for configuration change subscription.  Local configuration can be read for settings for the remote source by using multiple instances of  configuration builder. 
+The Configuration Service client can be configured by adding `AddRemoteConfiguration` to the standard configuration builder. In the following example, remote json configuration is added and a Redis endpoint is specified for configuration change subscription.  Local configuration can be read for settings for the remote source by using multiple instances of  configuration builder. 
 
 ```csharp
 var loggerFactory = LoggerFactory.Create(builder =>
