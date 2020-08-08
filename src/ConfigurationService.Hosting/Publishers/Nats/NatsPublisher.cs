@@ -32,6 +32,8 @@ namespace ConfigurationService.Hosting.Publishers.Nats
 
             var connectionFactory = new ConnectionFactory();
             _connection = connectionFactory.CreateConnection(_options);
+
+            _logger.LogInformation("NATS publisher initialized.");
         }
 
         public Task Publish(string subject, string message)

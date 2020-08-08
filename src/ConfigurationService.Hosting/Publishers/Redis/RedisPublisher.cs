@@ -35,6 +35,8 @@ namespace ConfigurationService.Hosting.Publishers.Redis
             _connection.ConnectionFailed += (sender, args) => { _logger.LogError(args.Exception, "Redis connection failed."); };
 
             _connection.ConnectionRestored += (sender, args) => { _logger.LogInformation("Redis connection restored."); };
+
+            _logger.LogInformation("Redis publisher initialized.");
         }
 
         public async Task Publish(string channel, string message)

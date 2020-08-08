@@ -45,6 +45,8 @@ namespace ConfigurationService.Hosting.Publishers.RabbitMq
             connection.ConnectionUnblocked += (sender, args) => { _logger.LogInformation("RabbitMQ connection was unblocked."); };
 
             _channel.ExchangeDeclare(_exchangeName, ExchangeType.Fanout);
+
+            _logger.LogInformation("RabbitMQ publisher initialized.");
         }
 
         public Task Publish(string routingKey, string message)

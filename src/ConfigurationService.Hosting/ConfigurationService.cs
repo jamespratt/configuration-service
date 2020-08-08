@@ -29,15 +29,15 @@ namespace ConfigurationService.Hosting
 
         public async Task Initialize(CancellationToken cancellationToken = default)
         {
+            _logger.LogInformation("Initializing {Name} configuration provider...", _provider.Name);
+
+            _provider.Initialize();
+
             if (_publisher != null)
             {
                 _logger.LogInformation("Initializing publisher...");
                 _publisher.Initialize();
             }
-
-            _logger.LogInformation("Initializing {Name} configuration provider...", _provider.Name);
-
-            _provider.Initialize();
 
             var paths = await _provider.ListPaths();
 
