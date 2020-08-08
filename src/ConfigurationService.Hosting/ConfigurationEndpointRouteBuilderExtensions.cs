@@ -26,7 +26,7 @@ namespace ConfigurationService.Hosting
             }
 
             var conventionBuilders = new List<IEndpointConventionBuilder>();
-            
+
             var listConfigurationBuilder = endpoints.RegisterListRoute(pattern);
             conventionBuilders.Add(listConfigurationBuilder);
 

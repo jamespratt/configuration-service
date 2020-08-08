@@ -10,27 +10,28 @@ namespace ConfigurationService.Hosting.Publishers.Nats
     {
         private readonly ILogger<NatsPublisher> _logger;
 
+        private readonly Options _options;
         private static IConnection _connection;
 
         public NatsPublisher(ILogger<NatsPublisher> logger, Options options)
         {
             _logger = logger;
 
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            _options = options ?? throw new ArgumentNullException(nameof(options));
+        }
 
-            options.AsyncErrorEventHandler += (sender, args) => { _logger.LogError(args.Error); };
+        public void Initialize()
+        {
+            _options.AsyncErrorEventHandler += (sender, args) => { _logger.LogError(args.Error); };
 
-            options.ClosedEventHandler += (sender, args) => { _logger.LogError(args.Error, "NATS connection was closed."); };
+            _options.ClosedEventHandler += (sender, args) => { _logger.LogError(args.Error, "NATS connection was closed."); };
 
-            options.DisconnectedEventHandler += (sender, args) => { _logger.LogError(args.Error, "NATS connection was disconnected."); };
+            _options.DisconnectedEventHandler += (sender, args) => { _logger.LogError(args.Error, "NATS connection was disconnected."); };
 
-            options.ReconnectedEventHandler += (sender, args) => { _logger.LogInformation("NATS connection was restored."); };
+            _options.ReconnectedEventHandler += (sender, args) => { _logger.LogInformation("NATS connection was restored."); };
 
             var connectionFactory = new ConnectionFactory();
-            _connection = connectionFactory.CreateConnection(options);
+            _connection = connectionFactory.CreateConnection(_options);
         }
 
         public Task Publish(string subject, string message)

@@ -15,7 +15,7 @@ namespace ConfigurationService.Client
     {
         internal IList<ConfigurationOptions> Configurations { get; } = new List<ConfigurationOptions>();
 
-        internal Func<ISubscriber> Subscriber { get; set; }
+        internal Func<ISubscriber> CreateSubscriber { get; set; }
 
         /// <summary>
         /// Configuration service endpoint.
@@ -61,20 +61,15 @@ namespace ConfigurationService.Client
         /// <summary>
         /// Adds a custom subscriber.
         /// </summary>
-        /// <param name="subscriber">The custom implementation of <see cref="ISubscriber"/>.</param>
-        public void AddSubscriber(Func<ISubscriber> subscriber)
+        /// <param name="subscriberFactory">The delegate used to create the custom implementation of <see cref="ISubscriber"/>.</param>
+        public void AddSubscriber(Func<ISubscriber> subscriberFactory)
         {
-            if (subscriber == null)
-            {
-                throw new ArgumentNullException(nameof(subscriber));
-            }
-
-            if (Subscriber != null)
+            if (CreateSubscriber != null)
             {
                 throw new InvalidOperationException("A subscriber has already been configured.");
             }
 
-            Subscriber = subscriber;
+            CreateSubscriber = subscriberFactory ?? throw new ArgumentNullException(nameof(subscriberFactory));
         }
 
         /// <summary>
@@ -88,7 +83,7 @@ namespace ConfigurationService.Client
                 throw new ArgumentNullException(nameof(configure));
             }
 
-            if (Subscriber != null)
+            if (CreateSubscriber != null)
             {
                 throw new InvalidOperationException("A subscriber has already been configured.");
             }
@@ -96,7 +91,7 @@ namespace ConfigurationService.Client
             var options = new RabbitMqOptions();
             configure(options);
 
-            Subscriber = () => new RabbitMqSubscriber(options);
+            CreateSubscriber = () => new RabbitMqSubscriber(options);
         }
 
         /// <summary>
@@ -110,7 +105,7 @@ namespace ConfigurationService.Client
                 throw new ArgumentNullException(nameof(configure));
             }
 
-            if (Subscriber != null)
+            if (CreateSubscriber != null)
             {
                 throw new InvalidOperationException("A subscriber has already been configured.");
             }
@@ -118,7 +113,7 @@ namespace ConfigurationService.Client
             var options = new RedisOptions();
             configure(options);
 
-            Subscriber = () => new RedisSubscriber(options);
+            CreateSubscriber = () => new RedisSubscriber(options);
         }
 
         /// <summary>
@@ -132,14 +127,14 @@ namespace ConfigurationService.Client
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            if (Subscriber != null)
+            if (CreateSubscriber != null)
             {
                 throw new InvalidOperationException("A subscriber has already been configured.");
             }
 
             var options = RedisOptions.Parse(configuration);
 
-            Subscriber = () => new RedisSubscriber(options);
+            CreateSubscriber = () => new RedisSubscriber(options);
         }
 
         /// <summary>
@@ -153,7 +148,7 @@ namespace ConfigurationService.Client
                 throw new ArgumentNullException(nameof(configure));
             }
 
-            if (Subscriber != null)
+            if (CreateSubscriber != null)
             {
                 throw new InvalidOperationException("A subscriber has already been configured.");
             }
@@ -161,7 +156,7 @@ namespace ConfigurationService.Client
             var options = ConnectionFactory.GetDefaultOptions();
             configure(options);
 
-            Subscriber = () => new NatsSubscriber(options);
+            CreateSubscriber = () => new NatsSubscriber(options);
         }
     }
 }

@@ -64,7 +64,7 @@ namespace ConfigurationService.Hosting
         {
             try
             {
-                await _configurationService.InitializeProvider(stoppingToken);
+                await _configurationService.Initialize(stoppingToken);
             }
             catch (Exception ex)
             {

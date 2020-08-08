@@ -6,7 +6,7 @@ namespace ConfigurationService.Hosting
 {
     public interface IConfigurationService
     {
-        Task InitializeProvider(CancellationToken cancellationToken = default);
+        Task Initialize(CancellationToken cancellationToken = default);
 
         Task OnChange(IEnumerable<string> paths);
 

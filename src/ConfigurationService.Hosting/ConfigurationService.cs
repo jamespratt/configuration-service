@@ -27,8 +27,14 @@ namespace ConfigurationService.Hosting
             }
         }
 
-        public async Task InitializeProvider(CancellationToken cancellationToken = default)
+        public async Task Initialize(CancellationToken cancellationToken = default)
         {
+            if (_publisher != null)
+            {
+                _logger.LogInformation("Initializing publisher...");
+                _publisher.Initialize();
+            }
+
             _logger.LogInformation("Initializing {Name} configuration provider...", _provider.Name);
 
             _provider.Initialize();

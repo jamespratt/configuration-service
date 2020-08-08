@@ -10,6 +10,7 @@ namespace ConfigurationService.Client.Subscribers.Redis
     {
         private readonly ILogger _logger;
 
+        private readonly RedisOptions _options;
         private static ConnectionMultiplexer _connection;
 
         public string Name => "Redis";
@@ -23,9 +24,7 @@ namespace ConfigurationService.Client.Subscribers.Redis
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            var configurationOptions = RedisOptions.Parse(configuration);
-
-            CreateConnection(configurationOptions);
+            _options = RedisOptions.Parse(configuration);
 
         }
 
@@ -33,12 +32,23 @@ namespace ConfigurationService.Client.Subscribers.Redis
         {
             _logger = Logger.CreateLogger<RedisSubscriber>();
 
-            if (configurationOptions == null)
+            _options = configurationOptions ?? throw new ArgumentNullException(nameof(configurationOptions));
+        }
+
+        public void Initialize()
+        {
+            using (var writer = new StringWriter())
             {
-                throw new ArgumentNullException(nameof(configurationOptions));
+                _connection = ConnectionMultiplexer.Connect(_options, writer);
+
+                _logger.LogDebug(writer.ToString());
             }
 
-            CreateConnection(configurationOptions);
+            _connection.ErrorMessage += (sender, args) => { _logger.LogError(args.Message); };
+
+            _connection.ConnectionFailed += (sender, args) => { _logger.LogError(args.Exception, "Redis connection failed."); };
+
+            _connection.ConnectionRestored += (sender, args) => { _logger.LogInformation("Redis connection restored."); };
         }
 
         public void Subscribe(string channel, Action<string> handler)
@@ -56,22 +66,6 @@ namespace ConfigurationService.Client.Subscribers.Redis
 
             var endpoint = subscriber.SubscribedEndpoint(channel);
             _logger.LogInformation("Subscribed to Redis endpoint {endpoint} for channel '{channel}'.", endpoint, channel);
-        }
-
-        private void CreateConnection(RedisOptions configurationOptions)
-        {
-            using (var writer = new StringWriter())
-            {
-                _connection = ConnectionMultiplexer.Connect(configurationOptions, writer);
-
-                _logger.LogDebug(writer.ToString());
-            }
-
-            _connection.ErrorMessage += (sender, args) => { _logger.LogError(args.Message); };
-
-            _connection.ConnectionFailed += (sender, args) => { _logger.LogError(args.Exception, "Redis connection failed."); };
-
-            _connection.ConnectionRestored += (sender, args) => { _logger.LogInformation("Redis connection restored."); };
         }
     }
 }

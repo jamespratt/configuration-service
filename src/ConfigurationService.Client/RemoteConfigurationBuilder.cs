@@ -41,7 +41,7 @@ namespace ConfigurationService.Client
                     ReloadOnChange = configuration.ReloadOnChange,
                     Parser = configuration.Parser,
 
-                    Subscriber = _remoteConfigurationOptions.Subscriber
+                    CreateSubscriber = _remoteConfigurationOptions.CreateSubscriber
                 };
 
                 Add(source);

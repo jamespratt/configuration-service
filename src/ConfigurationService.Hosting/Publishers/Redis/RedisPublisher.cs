@@ -10,20 +10,22 @@ namespace ConfigurationService.Hosting.Publishers.Redis
     {
         private readonly ILogger<RedisPublisher> _logger;
 
+        private readonly ConfigurationOptions _options;
         private static IConnectionMultiplexer _connection;
 
         public RedisPublisher(ILogger<RedisPublisher> logger, ConfigurationOptions configuration)
         {
             _logger = logger;
 
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            _options = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        }
+
+        public void Initialize()
+        {
 
             using (var writer = new StringWriter())
             {
-                _connection = ConnectionMultiplexer.Connect(configuration, writer);
+                _connection = ConnectionMultiplexer.Connect(_options, writer);
 
                 _logger.LogDebug(writer.ToString());
             }

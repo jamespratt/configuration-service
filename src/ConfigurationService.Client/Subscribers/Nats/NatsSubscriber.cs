@@ -8,6 +8,8 @@ namespace ConfigurationService.Client.Subscribers.Nats
     {
         private readonly ILogger _logger;
 
+        private readonly Options _options;
+
         private static IConnection _connection;
 
         public string Name => "NATS";
@@ -16,21 +18,21 @@ namespace ConfigurationService.Client.Subscribers.Nats
         {
             _logger = Logger.CreateLogger<NatsSubscriber>();
 
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            _options = options ?? throw new ArgumentNullException(nameof(options));
+        }
 
-            options.AsyncErrorEventHandler += (sender, args) => { _logger.LogError(args.Error); };
+        public void Initialize()
+        {
+            _options.AsyncErrorEventHandler += (sender, args) => { _logger.LogError(args.Error); };
 
-            options.ClosedEventHandler += (sender, args) => { _logger.LogError(args.Error, "NATS connection was closed."); };
+            _options.ClosedEventHandler += (sender, args) => { _logger.LogError(args.Error, "NATS connection was closed."); };
 
-            options.DisconnectedEventHandler += (sender, args) => { _logger.LogError(args.Error, "NATS connection was disconnected."); };
+            _options.DisconnectedEventHandler += (sender, args) => { _logger.LogError(args.Error, "NATS connection was disconnected."); };
 
-            options.ReconnectedEventHandler += (sender, args) => { _logger.LogInformation("NATS connection was restored."); };
+            _options.ReconnectedEventHandler += (sender, args) => { _logger.LogInformation("NATS connection was restored."); };
 
             var connectionFactory = new ConnectionFactory();
-            _connection = connectionFactory.CreateConnection(options);
+            _connection = connectionFactory.CreateConnection(_options);
         }
 
         public void Subscribe(string subject, Action<string> handler)

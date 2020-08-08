@@ -29,7 +29,7 @@ namespace ConfigurationService.Test
         [Fact]
         public async Task Publish_Invoked_on_Initialization()
         {
-            await _configurationService.InitializeProvider();
+            await _configurationService.Initialize();
 
             await _publisher.Received().Publish(Arg.Any<string>(), Arg.Any<string>());
         }

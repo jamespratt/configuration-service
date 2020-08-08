@@ -48,7 +48,7 @@ namespace ConfigurationService.Client
         /// <summary>
         /// Delegate to create the type of <see cref="ISubscriber"/> used to subscribe to published configuration messages.
         /// </summary>
-        public Func<ISubscriber> Subscriber { get; set; }
+        public Func<ISubscriber> CreateSubscriber { get; set; }
 
         /// <summary>
         /// The type used to configure the logging system and create instances of <see cref="ILogger"/>

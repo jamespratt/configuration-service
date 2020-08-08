@@ -10,7 +10,8 @@ namespace ConfigurationService.Client.Subscribers.RabbitMq
     {
         private readonly ILogger _logger;
 
-        private readonly string _exchangeName;
+        private readonly RabbitMqOptions _options;
+        private string _exchangeName;
         private static IModel _channel;
 
         public string Name => "RabbitMQ";
@@ -19,20 +20,20 @@ namespace ConfigurationService.Client.Subscribers.RabbitMq
         {
             _logger = Logger.CreateLogger<RabbitMqSubscriber>();
 
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            _options = options ?? throw new ArgumentNullException(nameof(options));
+        }
 
+        public void Initialize()
+        {
             var factory = new ConnectionFactory
             {
-                HostName = options.HostName,
-                VirtualHost = options.VirtualHost,
-                UserName = options.UserName,
-                Password = options.Password
+                HostName = _options.HostName,
+                VirtualHost = _options.VirtualHost,
+                UserName = _options.UserName,
+                Password = _options.Password
             };
 
-            _exchangeName = options.ExchangeName;
+            _exchangeName = _options.ExchangeName;
 
             var connection = factory.CreateConnection();
             _channel = connection.CreateModel();
