@@ -38,7 +38,7 @@ namespace ConfigurationService.Hosting.Publishers.Nats
 
         public Task Publish(string subject, string message)
         {
-            _logger.LogInformation("Publishing message to with subject {subject}.", subject);
+            _logger.LogInformation("Publishing message to NATS with subject {subject}.", subject);
 
             var data = Encoding.UTF8.GetBytes(message);
 
