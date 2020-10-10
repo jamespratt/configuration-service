@@ -23,7 +23,7 @@
   <ItemGroup>
     <PackageReference Include="LibGit2Sharp" Version="0.26.2" />
     <PackageReference Include="NATS.Client" Version="0.10.1" />
-    <PackageReference Include="RabbitMQ.Client" Version="6.1.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.2.1" />
     <PackageReference Include="StackExchange.Redis" Version="2.1.58" />
     <PackageReference Include="System.Text.Json" Version="4.7.2" />
     <PackageReference Include="VaultSharp" Version="1.4.0.5" />
