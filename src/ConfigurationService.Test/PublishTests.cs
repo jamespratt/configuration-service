@@ -68,10 +68,12 @@ namespace ConfigurationService.Test
         }
 
         [Fact]
-        public async Task Service_Permits_Null_Publisher()
+        public async Task Publish_Does_Not_Fail_when_No_Publisher_Registered()
         {
             var configurationService = new Hosting.ConfigurationService(_logger, _provider);
             await configurationService.PublishChanges(ListRandomFiles(1));
+            
+            await _publisher.DidNotReceive().Publish(Arg.Any<string>(), Arg.Any<string>());
         }
 
         [Fact]
