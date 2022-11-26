@@ -16,7 +16,7 @@ Configuration Service is a distributed configuration service for .NET.  Configur
 
 Configuration Service currently supports hosting configuration with git, file system or Vault backends and supports publishing changes with Redis, NATS or RabbitMQ publish/subscribe.  File types supported are .json, .yaml, .xml and .ini.
 
-[![Configuration Service Diagram](https://github.com/jamespratt/configuration-service/blob/master/images/configuration-service.gif)](#about-configuration-service)
+[![Configuration Service Diagram](https://raw.githubusercontent.com/jamespratt/configuration-service/main/images/configuration-service.gif)](#about-configuration-service)
 
 ## Features
 * RESTful HTTP based API for external configuration.
