@@ -12,7 +12,7 @@
 
 ## About Configuration Service
 
-Configuration Service is a distributed configuration service for .NET Core.  Configuration for fleets of applications, services, and containerized micro-services can be updated immediately without the need to redeploy or restart. Configuration Service uses a client/server pub/sub architecture to notify subscribed clients of configuration changes as they happen.  Configuration can be injected using the standard options pattern with `IOptions`, `IOptionsMonitor` or `IOptionsSnapshot`.
+Configuration Service is a distributed configuration service for .NET.  Configuration for fleets of applications, services, and containerized micro-services can be updated immediately without the need to redeploy or restart. Configuration Service uses a client/server pub/sub architecture to notify subscribed clients of configuration changes as they happen.  Configuration can be injected using the standard options pattern with `IOptions`, `IOptionsMonitor` or `IOptionsSnapshot`.
 
 Configuration Service currently supports hosting configuration with git, file system or Vault backends and supports publishing changes with Redis, NATS or RabbitMQ publish/subscribe.  File types supported are .json, .yaml, .xml and .ini.
 
@@ -20,7 +20,7 @@ Configuration Service currently supports hosting configuration with git, file sy
 
 ## Features
 * RESTful HTTP based API for external configuration.
-* Server easily integrates into an ASP.NET Core application.
+* Server easily integrates into an ASP.NET application.
 * Client easily integrates into any .NET Standard 2.0 application using the standard `ConfigurationBuilder` pattern.
 * Client encapsulates real-time configuration updates.
 * Support for git, file system and Vault backend storage.
@@ -44,7 +44,7 @@ Client:
     Install-Package ConfigurationService.Client
     
 ## Adding the Configuration Service Host
-The Configuration Service host middleware can be added to the service collection of an existing ASP.NET Core application.  The following example configures a git storage provider with a Redis publisher.
+The Configuration Service host middleware can be added to the service collection of an existing ASP.NET application.  The following example configures a git storage provider with a Redis publisher.
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
