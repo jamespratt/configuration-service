@@ -10,7 +10,7 @@ We want to make contributing to this project as easy and transparent as possible
 ## We Develop with Github
 We use github to host code, to track issues and feature requests, as well as accept pull requests.
 
-1. Fork the repo and create your branch from `master`.
+1. Fork the repo and create your branch from `main`.
 2. If you've added code that should be tested, add tests.
 3. If you've changed APIs, update the documentation.
 4. Ensure the test suite passes.
@@ -18,7 +18,7 @@ We use github to host code, to track issues and feature requests, as well as acc
 6. Issue that pull request!
 
 ## Any contributions you make will be under the MIT Software License
-When you submit code changes, your submissions are understood to be under the same [MIT License](https://github.com/jamespratt/configuration-service/blob/master/LICENSE) that covers the project. 
+When you submit code changes, your submissions are understood to be under the same [MIT License](https://github.com/jamespratt/configuration-service/blob/main/LICENSE) that covers the project. 
 Feel free to contact the maintainers if that's a concern.
 
 ## Report bugs using Github's [issues](https://github.com/jamespratt/configuration-service/issues)
