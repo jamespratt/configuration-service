@@ -199,7 +199,7 @@ namespace ConfigurationService.Client
                 }
             }
 
-            return null;
+            return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         }
 
         private string ComputeHash(Stream stream)
