@@ -51,7 +51,7 @@ namespace ConfigurationService.Hosting.Providers.Git
                     }
                     else
                     {
-                        throw new Exception("Attempting to list changed files timed out after 60 seconds.");
+                        throw new TimeoutException("Attempting to list changed files timed out after 60 seconds.");
                     }
 
                     if (files.Count > 0)
