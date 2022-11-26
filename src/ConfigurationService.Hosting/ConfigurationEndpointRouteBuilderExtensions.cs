@@ -78,7 +78,7 @@ namespace ConfigurationService.Hosting
             });
         }
 
-        private class CompositeEndpointConventionBuilder : IEndpointConventionBuilder
+        private sealed class CompositeEndpointConventionBuilder : IEndpointConventionBuilder
         {
             private readonly List<IEndpointConventionBuilder> _endpointConventionBuilders;
 

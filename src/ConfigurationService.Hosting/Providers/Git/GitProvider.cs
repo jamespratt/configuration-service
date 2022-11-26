@@ -26,12 +26,12 @@ namespace ConfigurationService.Hosting.Providers.Git
 
             if (string.IsNullOrWhiteSpace(_providerOptions.LocalPath))
             {
-                throw new ArgumentNullException(nameof(_providerOptions.LocalPath), $"{nameof(_providerOptions.LocalPath)} cannot be NULL or empty.");
+                throw new ProviderOptionNullException(nameof(_providerOptions.LocalPath));
             }
 
             if (string.IsNullOrWhiteSpace(_providerOptions.RepositoryUrl))
             {
-                throw new ArgumentNullException(nameof(_providerOptions.RepositoryUrl), $"{nameof(_providerOptions.RepositoryUrl)} cannot be NULL or empty.");
+                throw new ProviderOptionNullException(nameof(_providerOptions.RepositoryUrl));
             }
         }
 

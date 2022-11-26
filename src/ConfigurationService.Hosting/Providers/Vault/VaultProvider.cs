@@ -28,17 +28,17 @@ namespace ConfigurationService.Hosting.Providers.Vault
 
             if (string.IsNullOrWhiteSpace(_providerOptions.ServerUri))
             {
-                throw new ArgumentNullException(nameof(_providerOptions.ServerUri), $"{nameof(_providerOptions.ServerUri)} cannot be NULL or empty.");
+                throw new ProviderOptionNullException(nameof(_providerOptions.ServerUri));
             }
 
             if (string.IsNullOrWhiteSpace(_providerOptions.Path))
             {
-                throw new ArgumentNullException(nameof(_providerOptions.Path), $"{nameof(_providerOptions.Path)} cannot be NULL or empty.");
+                throw new ProviderOptionNullException(nameof(_providerOptions.Path));
             }
 
             if (_providerOptions.AuthMethodInfo == null)
             {
-                throw new ArgumentNullException(nameof(_providerOptions.AuthMethodInfo));
+                throw new ProviderOptionNullException(nameof(_providerOptions.AuthMethodInfo));
             }
         }
 

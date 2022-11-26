@@ -15,6 +15,7 @@ namespace ConfigurationService.Hosting
 
         private Task _executingTask;
         private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
+        private bool _disposed;
 
         public HostedConfigurationService(ILogger<HostedConfigurationService> logger, IHostApplicationLifetime applicationLifetime, IConfigurationService configurationService)
         {
@@ -79,7 +80,23 @@ namespace ConfigurationService.Hosting
 
         public void Dispose()
         {
-            _stoppingCts.Cancel();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                _stoppingCts.Cancel();
+            }
+
+            _disposed = true;
         }
 
         private void OnStarted()

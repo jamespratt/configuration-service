@@ -20,7 +20,7 @@ namespace ConfigurationService.Client
         private readonly RemoteConfigurationSource _source;
         private readonly Lazy<HttpClient> _httpClient;
         private readonly IConfigurationParser _parser;
-        private bool _isDisposed;
+        private bool _disposed;
 
         private string Hash { get; set; }
 
@@ -30,14 +30,14 @@ namespace ConfigurationService.Client
         {
             _source = source ?? throw new ArgumentNullException(nameof(source));
 
-            if (source.ConfigurationName == null)
+            if (string.IsNullOrWhiteSpace(source.ConfigurationName))
             {
-                throw new ArgumentNullException(nameof(source.ConfigurationName));
+                throw new RemoteConfigurationException(nameof(source.ConfigurationName));
             }
 
-            if (source.ConfigurationServiceUri == null)
+            if (string.IsNullOrWhiteSpace(source.ConfigurationServiceUri))
             {
-                throw new ArgumentNullException(nameof(source.ConfigurationServiceUri));
+                throw new RemoteConfigurationException(nameof(source.ConfigurationServiceUri));
             }
 
             Logger.LoggerFactory = source.LoggerFactory ?? new NullLoggerFactory();
@@ -110,30 +110,33 @@ namespace ConfigurationService.Client
 
         public override void Load() => LoadAsync().ContinueWith(task =>
         {
-            if (task.IsFaulted)
+            if (task.IsFaulted && task.Exception != null)
             {
-                if (task.Exception != null)
-                {
-                    var ex = task.Exception.Flatten();
-                    _logger.LogError(ex, ex.Message);
-                    throw ex;
-                }
+                var ex = task.Exception.Flatten();
+                _logger.LogError(ex, ex.Message);
+                throw ex;
             }
         }).GetAwaiter().GetResult();
 
         public void Dispose()
         {
-            if (_isDisposed)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
             {
                 return;
             }
 
-            if (_httpClient?.IsValueCreated == true)
+            if (disposing && _httpClient?.IsValueCreated == true)
             {
                 _httpClient.Value.Dispose();
             }
-
-            _isDisposed = true;
+            
+            _disposed = true;
         }
 
         private HttpClient CreateHttpClient()
@@ -187,7 +190,7 @@ namespace ConfigurationService.Client
 
                     if (!_source.Optional)
                     {
-                        throw new Exception($"Error calling remote configuration endpoint: {response.StatusCode} - {response.ReasonPhrase}");
+                        throw new HttpRequestException($"Error calling remote configuration endpoint: {response.StatusCode} - {response.ReasonPhrase}");
                     }
                 }
             }

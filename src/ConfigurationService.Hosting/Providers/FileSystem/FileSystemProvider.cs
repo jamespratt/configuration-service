@@ -26,7 +26,7 @@ namespace ConfigurationService.Hosting.Providers.FileSystem
 
             if (string.IsNullOrWhiteSpace(_providerOptions.Path))
             {
-                throw new ArgumentNullException(nameof(_providerOptions.Path), $"{nameof(_providerOptions.Path)} cannot be NULL or empty.");
+                throw new ProviderOptionNullException(nameof(_providerOptions.Path));
             }
         }
 
