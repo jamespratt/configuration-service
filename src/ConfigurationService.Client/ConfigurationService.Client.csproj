@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <Description>
-      Contains the client configuration provider, file parsers and subscriber components for Configuration Service. Configuration Service is an remote configuration service for .NET Core.
+      Contains the client configuration provider, file parsers and subscriber components for Configuration Service. 
+      Configuration Service is a distributed configuration service for .NET.
     </Description>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Version>1.0.0</Version>
