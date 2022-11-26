@@ -2,9 +2,9 @@ name: develop
 
 on:
   push:
-    branches-ignore: [ master ]
+    branches-ignore: [ main ]
   pull_request:
-    branches-ignore: [ master ]
+    branches-ignore: [ main ]
 
 jobs:
   build:
