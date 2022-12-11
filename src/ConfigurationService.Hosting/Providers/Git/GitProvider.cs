@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ConfigurationService.Hosting.Extensions;
+
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
 using Microsoft.Extensions.Logging;
@@ -158,7 +160,7 @@ namespace ConfigurationService.Hosting.Providers.Git
 
                 foreach (var entry in repo.Index)
                 {
-                    files.Add(entry.Path);
+                    files.Add(entry.Path.NormalizePathSeparators());
                 }
             }
 
@@ -187,7 +189,7 @@ namespace ConfigurationService.Hosting.Providers.Git
                     if (entry.Exists)
                     {
                         _logger.LogInformation("File {Path} changed.", entry.Path);
-                        changedFiles.Add(entry.Path);
+                        changedFiles.Add(entry.Path.NormalizePathSeparators());
                     }
                     else
                     {
@@ -281,7 +283,7 @@ namespace ConfigurationService.Hosting.Providers.Git
 
         private string GetRelativePath(string fullPath)
         {
-            return Path.GetRelativePath(_providerOptions.LocalPath, fullPath);
+            return Path.GetRelativePath(_providerOptions.LocalPath, fullPath).NormalizePathSeparators();
         }
     }
 }
