@@ -205,6 +205,6 @@ configuration = new ConfigurationBuilder()
 |**AddLoggerFactory**|Adds the type used to configure the logging system and create instances of `ILogger`.|
 
 ## Samples
-Samples of both host and client implementations can be viewed at [Samples](https://github.com/jamespratt/configuration-service/tree/main/samples).
+Samples of both host and client implementations can be viewed at [Samples](https://github.com/jamespratt/configuration-service/tree/main/src/samples).
 
 [![Build history](https://buildstats.info/github/chart/jamespratt/configuration-service)](https://github.com/jamespratt/configuration-service/actions?query=workflow%3Arelease)
