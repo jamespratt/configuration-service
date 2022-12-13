@@ -22,9 +22,9 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="NATS.Client" Version="1.0.2" />
     <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
-    <PackageReference Include="StackExchange.Redis" Version="2.6.80" />
-    <PackageReference Include="System.Text.Json" Version="7.0.0" />
-    <PackageReference Include="YamlDotNet" Version="12.0.2" />
+    <PackageReference Include="StackExchange.Redis" Version="2.6.86" />
+    <PackageReference Include="System.Text.Json" Version="7.0.1" />
+    <PackageReference Include="YamlDotNet" Version="12.2.0" />
   </ItemGroup>
 
   <ItemGroup>
