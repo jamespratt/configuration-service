@@ -35,20 +35,20 @@ namespace ConfigurationService.Client.Subscribers.Nats
             _connection = connectionFactory.CreateConnection(_options);
         }
 
-        public void Subscribe(string subject, Action<string> handler)
+        public void Subscribe(string topic, Action<string> handler)
         {
-            _logger.LogInformation("Subscribing to NATS subject '{Subject}'", subject);
+            _logger.LogInformation("Subscribing to NATS subject '{Subject}'", topic);
 
-            _connection.SubscribeAsync(subject, (sender, args) =>
+            _connection.SubscribeAsync(topic, (sender, args) =>
             {
-                _logger.LogInformation("Received subscription on NATS subject '{Subject}'", subject);
+                _logger.LogInformation("Received subscription on NATS subject '{Subject}'", topic);
 
                 var message = args.Message.ToString();
 
                 handler(message);
             });
 
-            _logger.LogInformation("Subscribed to NATS subject '{Subject}'", subject);
+            _logger.LogInformation("Subscribed to NATS subject '{Subject}'", topic);
         }
     }
 }

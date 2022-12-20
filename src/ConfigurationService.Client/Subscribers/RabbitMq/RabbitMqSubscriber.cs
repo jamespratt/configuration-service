@@ -49,12 +49,12 @@ namespace ConfigurationService.Client.Subscribers.RabbitMq
             _channel.ExchangeDeclare(_exchangeName, ExchangeType.Fanout);
         }
 
-        public void Subscribe(string routingKey, Action<string> handler)
+        public void Subscribe(string topic, Action<string> handler)
         {
-            _logger.LogInformation("Binding to RabbitMQ queue with routing key '{RoutingKey}'", routingKey);
+            _logger.LogInformation("Binding to RabbitMQ queue with routing key '{RoutingKey}'", topic);
 
             var queueName = _channel.QueueDeclare().QueueName;
-            _channel.QueueBind(queueName, _exchangeName, routingKey);
+            _channel.QueueBind(queueName, _exchangeName, topic);
 
             var consumer = new EventingBasicConsumer(_channel);
 

@@ -36,13 +36,13 @@ public class NatsPublisher : IPublisher
         _logger.LogInformation("NATS publisher initialized");
     }
 
-    public Task Publish(string subject, string message)
+    public Task Publish(string topic, string message)
     {
-        _logger.LogInformation("Publishing message to NATS with subject {Subject}", subject);
+        _logger.LogInformation("Publishing message to NATS with subject {Subject}", topic);
 
         var data = Encoding.UTF8.GetBytes(message);
 
-        _connection.Publish(subject, data);
+        _connection.Publish(topic, data);
 
         return Task.CompletedTask;
     }

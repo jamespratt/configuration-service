@@ -49,12 +49,12 @@ public class RabbitMqPublisher : IPublisher
         _logger.LogInformation("RabbitMQ publisher initialized");
     }
 
-    public Task Publish(string routingKey, string message)
+    public Task Publish(string topic, string message)
     {
-        _logger.LogInformation("Publishing message with routing key {RoutingKey}", routingKey);
+        _logger.LogInformation("Publishing message with routing key {RoutingKey}", topic);
 
         var body = Encoding.UTF8.GetBytes(message);
-        _channel.BasicPublish(_exchangeName, routingKey, null, body);
+        _channel.BasicPublish(_exchangeName, topic, null, body);
 
         return Task.CompletedTask;
     }

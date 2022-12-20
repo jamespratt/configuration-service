@@ -39,14 +39,14 @@ public class RedisPublisher : IPublisher
         _logger.LogInformation("Redis publisher initialized");
     }
 
-    public async Task Publish(string channel, string message)
+    public async Task Publish(string topic, string message)
     {
-        _logger.LogInformation("Publishing message to channel {Channel}", channel);
+        _logger.LogInformation("Publishing message to channel {Channel}", topic);
 
         var publisher = _connection.GetSubscriber();
 
-        var clientCount = await publisher.PublishAsync(channel, message);
+        var clientCount = await publisher.PublishAsync(topic, message);
 
-        _logger.LogInformation("Message to channel {Channel} was received by {ClientCount} clients", channel, clientCount);
+        _logger.LogInformation("Message to channel {Channel} was received by {ClientCount} clients", topic, clientCount);
     }
 }

@@ -51,21 +51,21 @@ namespace ConfigurationService.Client.Subscribers.Redis
             _connection.ConnectionRestored += (sender, args) => { _logger.LogInformation("Redis connection restored"); };
         }
 
-        public void Subscribe(string channel, Action<string> handler)
+        public void Subscribe(string topic, Action<string> handler)
         {
-            _logger.LogInformation("Subscribing to Redis channel '{Channel}'", channel);
+            _logger.LogInformation("Subscribing to Redis channel '{Channel}'", topic);
 
             var subscriber = _connection.GetSubscriber();
 
-            subscriber.Subscribe(channel, (redisChannel, value) =>
+            subscriber.Subscribe(topic, (redisChannel, value) =>
             {
-                _logger.LogInformation("Received subscription on Redis channel '{Channel}'", channel);
+                _logger.LogInformation("Received subscription on Redis channel '{Channel}'", topic);
 
                 handler(value);
             });
 
-            var endpoint = subscriber.SubscribedEndpoint(channel);
-            _logger.LogInformation("Subscribed to Redis endpoint {Endpoint} for channel '{Channel}'", endpoint, channel);
+            var endpoint = subscriber.SubscribedEndpoint(topic);
+            _logger.LogInformation("Subscribed to Redis endpoint {Endpoint} for channel '{Channel}'", endpoint, topic);
         }
     }
 }

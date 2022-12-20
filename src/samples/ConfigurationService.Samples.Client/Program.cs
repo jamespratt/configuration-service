@@ -7,7 +7,7 @@ using ConfigurationService.Client.Parsers;
 
 namespace ConfigurationService.Samples.Client;
 
-class Program
+static class Program
 {
     static async Task Main()
     {
