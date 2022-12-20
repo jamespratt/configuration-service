@@ -2,14 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ConfigurationService.Hosting
+namespace ConfigurationService.Hosting;
+
+public interface IConfigurationService
 {
-    public interface IConfigurationService
-    {
-        Task Initialize(CancellationToken cancellationToken = default);
+    Task Initialize(CancellationToken cancellationToken = default);
 
-        Task OnChange(IEnumerable<string> paths);
+    Task OnChange(IEnumerable<string> paths);
 
-        Task PublishChanges(IEnumerable<string> paths);
-    }
+    Task PublishChanges(IEnumerable<string> paths);
 }

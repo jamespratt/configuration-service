@@ -4,50 +4,49 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 
-namespace ConfigurationService.Hosting.Publishers.Redis
+namespace ConfigurationService.Hosting.Publishers.Redis;
+
+public class RedisPublisher : IPublisher
 {
-    public class RedisPublisher : IPublisher
+    private readonly ILogger<RedisPublisher> _logger;
+
+    private readonly ConfigurationOptions _options;
+    private static IConnectionMultiplexer _connection;
+
+    public RedisPublisher(ILogger<RedisPublisher> logger, ConfigurationOptions configuration)
     {
-        private readonly ILogger<RedisPublisher> _logger;
+        _logger = logger;
 
-        private readonly ConfigurationOptions _options;
-        private static IConnectionMultiplexer _connection;
+        _options = configuration ?? throw new ArgumentNullException(nameof(configuration));
+    }
 
-        public RedisPublisher(ILogger<RedisPublisher> logger, ConfigurationOptions configuration)
+    public void Initialize()
+    {
+
+        using (var writer = new StringWriter())
         {
-            _logger = logger;
+            _connection = ConnectionMultiplexer.Connect(_options, writer);
 
-            _options = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _logger.LogDebug(writer.ToString());
         }
 
-        public void Initialize()
-        {
+        _connection.ErrorMessage += (sender, args) => { _logger.LogError("Redis replied with an error message: {Message}", args.Message); };
 
-            using (var writer = new StringWriter())
-            {
-                _connection = ConnectionMultiplexer.Connect(_options, writer);
+        _connection.ConnectionFailed += (sender, args) => { _logger.LogError(args.Exception, "Redis connection failed"); };
 
-                _logger.LogDebug(writer.ToString());
-            }
+        _connection.ConnectionRestored += (sender, args) => { _logger.LogInformation("Redis connection restored"); };
 
-            _connection.ErrorMessage += (sender, args) => { _logger.LogError("Redis replied with an error message: {Message}", args.Message); };
+        _logger.LogInformation("Redis publisher initialized");
+    }
 
-            _connection.ConnectionFailed += (sender, args) => { _logger.LogError(args.Exception, "Redis connection failed"); };
+    public async Task Publish(string channel, string message)
+    {
+        _logger.LogInformation("Publishing message to channel {Channel}", channel);
 
-            _connection.ConnectionRestored += (sender, args) => { _logger.LogInformation("Redis connection restored"); };
+        var publisher = _connection.GetSubscriber();
 
-            _logger.LogInformation("Redis publisher initialized");
-        }
+        var clientCount = await publisher.PublishAsync(channel, message);
 
-        public async Task Publish(string channel, string message)
-        {
-            _logger.LogInformation("Publishing message to channel {Channel}", channel);
-
-            var publisher = _connection.GetSubscriber();
-
-            var clientCount = await publisher.PublishAsync(channel, message);
-
-            _logger.LogInformation("Message to channel {Channel} was received by {ClientCount} clients", channel, clientCount);
-        }
+        _logger.LogInformation("Message to channel {Channel} was received by {ClientCount} clients", channel, clientCount);
     }
 }

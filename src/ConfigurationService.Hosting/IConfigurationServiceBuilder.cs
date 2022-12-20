@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace ConfigurationService.Hosting
+namespace ConfigurationService.Hosting;
+
+public interface IConfigurationServiceBuilder
 {
-    public interface IConfigurationServiceBuilder
-    {
-        IServiceCollection Services { get; }
-    }
+    IServiceCollection Services { get; }
 }

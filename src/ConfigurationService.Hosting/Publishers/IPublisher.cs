@@ -1,11 +1,10 @@
 ﻿using System.Threading.Tasks;
 
-namespace ConfigurationService.Hosting.Publishers
-{
-    public interface IPublisher
-    {
-        void Initialize();
+namespace ConfigurationService.Hosting.Publishers;
 
-        Task Publish(string topic, string message);
-    }
+public interface IPublisher
+{
+    void Initialize();
+
+    Task Publish(string topic, string message);
 }

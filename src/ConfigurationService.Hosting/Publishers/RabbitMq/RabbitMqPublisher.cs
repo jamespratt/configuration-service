@@ -4,59 +4,58 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
-namespace ConfigurationService.Hosting.Publishers.RabbitMq
+namespace ConfigurationService.Hosting.Publishers.RabbitMq;
+
+public class RabbitMqPublisher : IPublisher
 {
-    public class RabbitMqPublisher : IPublisher
+    private readonly ILogger<RabbitMqPublisher> _logger;
+
+    private readonly RabbitMqOptions _options;
+    private string _exchangeName;
+    private static IModel _channel;
+
+    public RabbitMqPublisher(ILogger<RabbitMqPublisher> logger, RabbitMqOptions options)
     {
-        private readonly ILogger<RabbitMqPublisher> _logger;
+        _logger = logger;
 
-        private readonly RabbitMqOptions _options;
-        private string _exchangeName;
-        private static IModel _channel;
+        _options = options ?? throw new ArgumentNullException(nameof(options));
+    }
 
-        public RabbitMqPublisher(ILogger<RabbitMqPublisher> logger, RabbitMqOptions options)
+    public void Initialize()
+    {
+        var factory = new ConnectionFactory
         {
-            _logger = logger;
+            HostName = _options.HostName,
+            VirtualHost = _options.VirtualHost,
+            UserName = _options.UserName,
+            Password = _options.Password
+        };
 
-            _options = options ?? throw new ArgumentNullException(nameof(options));
-        }
+        _exchangeName = _options.ExchangeName;
 
-        public void Initialize()
-        {
-            var factory = new ConnectionFactory
-            {
-                HostName = _options.HostName,
-                VirtualHost = _options.VirtualHost,
-                UserName = _options.UserName,
-                Password = _options.Password
-            };
+        var connection = factory.CreateConnection();
+        _channel = connection.CreateModel();
 
-            _exchangeName = _options.ExchangeName;
+        connection.CallbackException += (sender, args) => { _logger.LogError(args.Exception, "RabbitMQ callback exception"); };
 
-            var connection = factory.CreateConnection();
-            _channel = connection.CreateModel();
+        connection.ConnectionBlocked += (sender, args) => { _logger.LogError("RabbitMQ connection is blocked. Reason: {Reason}", args.Reason); };
 
-            connection.CallbackException += (sender, args) => { _logger.LogError(args.Exception, "RabbitMQ callback exception"); };
+        connection.ConnectionShutdown += (sender, args) => { _logger.LogError("RabbitMQ connection was shut down. Reason: {ReplyText}", args.ReplyText); };
 
-            connection.ConnectionBlocked += (sender, args) => { _logger.LogError("RabbitMQ connection is blocked. Reason: {Reason}", args.Reason); };
+        connection.ConnectionUnblocked += (sender, args) => { _logger.LogInformation("RabbitMQ connection was unblocked"); };
 
-            connection.ConnectionShutdown += (sender, args) => { _logger.LogError("RabbitMQ connection was shut down. Reason: {ReplyText}", args.ReplyText); };
+        _channel.ExchangeDeclare(_exchangeName, ExchangeType.Fanout);
 
-            connection.ConnectionUnblocked += (sender, args) => { _logger.LogInformation("RabbitMQ connection was unblocked"); };
+        _logger.LogInformation("RabbitMQ publisher initialized");
+    }
 
-            _channel.ExchangeDeclare(_exchangeName, ExchangeType.Fanout);
+    public Task Publish(string routingKey, string message)
+    {
+        _logger.LogInformation("Publishing message with routing key {RoutingKey}", routingKey);
 
-            _logger.LogInformation("RabbitMQ publisher initialized");
-        }
+        var body = Encoding.UTF8.GetBytes(message);
+        _channel.BasicPublish(_exchangeName, routingKey, null, body);
 
-        public Task Publish(string routingKey, string message)
-        {
-            _logger.LogInformation("Publishing message with routing key {RoutingKey}", routingKey);
-
-            var body = Encoding.UTF8.GetBytes(message);
-            _channel.BasicPublish(_exchangeName, routingKey, null, body);
-
-            return Task.CompletedTask;
-        }
+        return Task.CompletedTask;
     }
 }

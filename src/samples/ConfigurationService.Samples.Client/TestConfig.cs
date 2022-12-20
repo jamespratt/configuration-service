@@ -1,7 +1,6 @@
-﻿namespace ConfigurationService.Samples.Client
+﻿namespace ConfigurationService.Samples.Client;
+
+public class TestConfig
 {
-    public class TestConfig
-    {
-        public string Text { get; set; }
-    }
+    public string Text { get; set; }
 }

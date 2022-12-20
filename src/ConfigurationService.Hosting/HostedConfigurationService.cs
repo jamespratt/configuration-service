@@ -4,114 +4,113 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace ConfigurationService.Hosting
+namespace ConfigurationService.Hosting;
+
+public class HostedConfigurationService : IHostedService, IDisposable
 {
-    public class HostedConfigurationService : IHostedService, IDisposable
+    private readonly ILogger<HostedConfigurationService> _logger;
+
+    private readonly IHostApplicationLifetime _applicationLifetime;
+    private readonly IConfigurationService _configurationService;
+
+    private Task _executingTask;
+    private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
+    private bool _disposed;
+
+    public HostedConfigurationService(ILogger<HostedConfigurationService> logger, IHostApplicationLifetime applicationLifetime, IConfigurationService configurationService)
     {
-        private readonly ILogger<HostedConfigurationService> _logger;
+        _logger = logger;
+        _applicationLifetime = applicationLifetime;
+        _configurationService = configurationService;
+    }
 
-        private readonly IHostApplicationLifetime _applicationLifetime;
-        private readonly IConfigurationService _configurationService;
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Starting Configuration Service");
 
-        private Task _executingTask;
-        private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
-        private bool _disposed;
+        _applicationLifetime.ApplicationStarted.Register(OnStarted);
+        _applicationLifetime.ApplicationStopping.Register(OnStopping);
+        _applicationLifetime.ApplicationStopped.Register(OnStopped);
 
-        public HostedConfigurationService(ILogger<HostedConfigurationService> logger, IHostApplicationLifetime applicationLifetime, IConfigurationService configurationService)
+        _executingTask = ExecuteAsync(_stoppingCts.Token);
+
+        if (_executingTask.IsCompleted)
         {
-            _logger = logger;
-            _applicationLifetime = applicationLifetime;
-            _configurationService = configurationService;
+            return _executingTask;
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        return Task.CompletedTask;
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken)
+    {
+        if (_executingTask == null)
         {
-            _logger.LogInformation("Starting Configuration Service");
-
-            _applicationLifetime.ApplicationStarted.Register(OnStarted);
-            _applicationLifetime.ApplicationStopping.Register(OnStopping);
-            _applicationLifetime.ApplicationStopped.Register(OnStopped);
-
-            _executingTask = ExecuteAsync(_stoppingCts.Token);
-
-            if (_executingTask.IsCompleted)
-            {
-                return _executingTask;
-            }
-
-            return Task.CompletedTask;
+            return;
         }
 
-        public async Task StopAsync(CancellationToken cancellationToken)
+        try
         {
-            if (_executingTask == null)
-            {
-                return;
-            }
-
-            try
-            {
-                // Signal cancellation to the executing method
-                _stoppingCts.Cancel();
-            }
-            finally
-            {
-                // Wait until the task completes or the stop token triggers
-                await Task.WhenAny(_executingTask, Task.Delay(Timeout.Infinite, cancellationToken));
-            }
+            // Signal cancellation to the executing method
+            _stoppingCts.Cancel();
         }
-
-        public async Task ExecuteAsync(CancellationToken stoppingToken)
+        finally
         {
-            try
-            {
-                await _configurationService.Initialize(stoppingToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An unhandled exception occurred while attempting to initialize the configuration provider");
-
-                _logger.LogInformation("The application will be terminated");
-
-                await StopAsync(stoppingToken);
-                _applicationLifetime.StopApplication();
-            }
+            // Wait until the task completes or the stop token triggers
+            await Task.WhenAny(_executingTask, Task.Delay(Timeout.Infinite, cancellationToken));
         }
+    }
 
-        public void Dispose()
+    public async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        try
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            await _configurationService.Initialize(stoppingToken);
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unhandled exception occurred while attempting to initialize the configuration provider");
+
+            _logger.LogInformation("The application will be terminated");
+
+            await StopAsync(stoppingToken);
+            _applicationLifetime.StopApplication();
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
         
-        protected virtual void Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
         {
-            if (_disposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                _stoppingCts.Cancel();
-            }
-
-            _disposed = true;
+            return;
         }
 
-        private void OnStarted()
+        if (disposing)
         {
-            _logger.LogInformation("Configuration Service started");
+            _stoppingCts.Cancel();
         }
 
-        private void OnStopping()
-        {
-            _logger.LogInformation("Configuration Service is stopping...");
-        }
+        _disposed = true;
+    }
 
-        private void OnStopped()
-        {
-            _logger.LogInformation("Configuration Service stopped");
-        }
+    private void OnStarted()
+    {
+        _logger.LogInformation("Configuration Service started");
+    }
+
+    private void OnStopping()
+    {
+        _logger.LogInformation("Configuration Service is stopping...");
+    }
+
+    private void OnStopped()
+    {
+        _logger.LogInformation("Configuration Service stopped");
     }
 }
