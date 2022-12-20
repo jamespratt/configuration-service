@@ -47,18 +47,13 @@ Client:
 The Configuration Service host middleware can be added to the service collection of an existing ASP.NET application.  The following example configures a git storage provider with a Redis publisher.
 
 ```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddControllers();
-
-    services.AddConfigurationService()
-        .AddGitProvider(c =>
-        {
-            c.RepositoryUrl = "https://github.com/jamespratt/configuration-test.git";
-            c.LocalPath = "C:/local-repo";
-        })
-        .AddRedisPublisher("localhost:6379");
-}
+builder.Services.AddConfigurationService()
+    .AddGitProvider(c =>
+    {
+        c.RepositoryUrl = "https://github.com/jamespratt/configuration-test.git";
+        c.LocalPath = "C:/local-repo";
+    })
+    .AddRedisPublisher("localhost:6379");
 ```
 
 In Startup.Configure, call `MapConfigurationService` on the endpoint builder. The default pattern is "/configuration".
