@@ -1,20 +1,22 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using ConfigurationService.Hosting;
 
-namespace ConfigurationService.Samples.Host
-{
-    public class Program
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddConfigurationService()
+    .AddGitProvider(c =>
     {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+        c.RepositoryUrl = "https://github.com/jamespratt/configuration-test.git";
+        c.LocalPath = "C:/local-repo";
+    })
+    .AddRedisPublisher("localhost:6379");
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
-}
+var app = builder.Build();
+
+app.UseRouting();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapConfigurationService();
+});
+
+app.Run();
