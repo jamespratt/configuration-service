@@ -27,7 +27,7 @@ public class RedisPublisher : IPublisher
         {
             _connection = ConnectionMultiplexer.Connect(_options, writer);
 
-            _logger.LogDebug(writer.ToString());
+            _logger.LogTrace("Redis publisher connected with log:\r\n{Log}", writer);
         }
 
         _connection.ErrorMessage += (sender, args) => { _logger.LogError("Redis replied with an error message: {Message}", args.Message); };
