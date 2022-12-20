@@ -44,7 +44,7 @@ namespace ConfigurationService.Client
 
             _logger = Logger.CreateLogger<RemoteConfigurationProvider>();
 
-            _logger.LogInformation("Initializing remote configuration source for configuration '{ConfigurationName}'.", source.ConfigurationName);
+            _logger.LogInformation("Initializing remote configuration source for configuration '{ConfigurationName}'", source.ConfigurationName);
 
             _httpClient = new Lazy<HttpClient>(CreateHttpClient);
 
@@ -54,7 +54,7 @@ namespace ConfigurationService.Client
             {
                 var extension = Path.GetExtension(source.ConfigurationName).ToLower();
 
-                _logger.LogInformation("A file parser was not specified. Attempting to resolve parser from file extension '{extension}'.", extension);
+                _logger.LogInformation("A file parser was not specified. Attempting to resolve parser from file extension '{Extension}'", extension);
 
                 switch (extension)
                 {
@@ -73,31 +73,36 @@ namespace ConfigurationService.Client
                 }
             }
 
-            _logger.LogInformation("Using parser {Name}.", _parser.GetType().Name);
+            _logger.LogInformation("Using parser {Name}", _parser.GetType().Name);
 
             if (source.ReloadOnChange)
             {
                 if (source.CreateSubscriber == null)
                 {
-                    _logger.LogWarning("ReloadOnChange is enabled but a subscriber has not been configured.");
+                    _logger.LogWarning("ReloadOnChange is enabled but a subscriber has not been configured");
                     return;
                 }
 
                 var subscriber = source.CreateSubscriber();
 
-                _logger.LogInformation("Initializing remote configuration {Name} subscriber for configuration '{ConfigurationName}'.", subscriber.Name, source.ConfigurationName);
+                _logger.LogInformation("Initializing remote configuration {Name} subscriber for configuration '{ConfigurationName}'",
+                    subscriber.Name, source.ConfigurationName);
 
                 subscriber.Initialize();
 
                 subscriber.Subscribe(source.ConfigurationName, message =>
                 {
-                    _logger.LogInformation("Received remote configuration change subscription for configuration '{ConfigurationName}' with hash {message}. " +
-                                           "Current hash is {Hash}.", source.ConfigurationName, message, Hash);
+                    _logger.LogInformation("Received remote configuration change subscription for configuration '{ConfigurationName}' with hash {Message}",
+                        source.ConfigurationName, message);
+                    
+                    _logger.LogInformation("Current hash is {Hash}", Hash);
 
                     if (message != null && message.Equals(Hash, StringComparison.OrdinalIgnoreCase))
                     {
-                        _logger.LogInformation("Configuration '{ConfigurationName}' current hash {Hash} matches new hash. " +
-                                               "Configuration will not be updated.", source.ConfigurationName, Hash);
+                        _logger.LogInformation("Configuration '{ConfigurationName}' current hash {Hash} matches new hash",
+                            source.ConfigurationName, Hash);
+                        
+                        _logger.LogInformation("Configuration will not be updated");
 
                         return;
                     }
@@ -113,7 +118,7 @@ namespace ConfigurationService.Client
             if (task.IsFaulted && task.Exception != null)
             {
                 var ex = task.Exception.Flatten();
-                _logger.LogError(ex, ex.Message);
+                _logger.LogError(ex, "Failed to load remote configuration provider");
                 throw ex;
             }
         }).GetAwaiter().GetResult();
@@ -160,29 +165,32 @@ namespace ConfigurationService.Client
         {
             var encodedConfigurationName = WebUtility.UrlEncode(_source.ConfigurationName);
 
-            _logger.LogInformation("Requesting remote configuration {ConfigurationName} from {BaseAddress}.", _source.ConfigurationName, HttpClient.BaseAddress);
+            _logger.LogInformation("Requesting remote configuration {ConfigurationName} from {BaseAddress}",
+                _source.ConfigurationName, HttpClient.BaseAddress);
 
             try
             {
                 using (var response = await HttpClient.GetAsync(encodedConfigurationName).ConfigureAwait(false))
                 {
-                    _logger.LogInformation("Received response status code {StatusCode} from endpoint for configuration '{ConfigurationName}'.",
+                    _logger.LogInformation("Received response status code {StatusCode} from endpoint for configuration '{ConfigurationName}'",
                         response.StatusCode, _source.ConfigurationName);
 
                     if (response.IsSuccessStatusCode)
                     {
                         using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
                         {
-                            _logger.LogInformation("Parsing remote configuration response stream ({Length:N0} bytes) for configuration '{ConfigurationName}'.",
+                            _logger.LogInformation("Parsing remote configuration response stream " +
+                                                   "({Length:N0} bytes) for configuration '{ConfigurationName}'",
                                 stream.Length, _source.ConfigurationName);
 
                             Hash = ComputeHash(stream);
-                            _logger.LogInformation("Computed hash for Configuration '{ConfigurationName}' is {Hash}.", _source.ConfigurationName, Hash);
+                            _logger.LogInformation("Computed hash for Configuration '{ConfigurationName}' is {Hash}",
+                                _source.ConfigurationName, Hash);
 
                             stream.Position = 0;
                             var data = _parser.Parse(stream);
 
-                            _logger.LogInformation("Configuration updated for '{ConfigurationName}'.", _source.ConfigurationName);
+                            _logger.LogInformation("Configuration updated for '{ConfigurationName}'", _source.ConfigurationName);
 
                             return data;
                         }

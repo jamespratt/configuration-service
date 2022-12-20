@@ -23,7 +23,7 @@ namespace ConfigurationService.Hosting
 
             if (_publisher == null)
             {
-                _logger.LogInformation("A publisher has not been configured.");
+                _logger.LogInformation("A publisher has not been configured");
             }
         }
 
@@ -45,12 +45,12 @@ namespace ConfigurationService.Hosting
 
             await _provider.Watch(OnChange, cancellationToken);
 
-            _logger.LogInformation("{Name} configuration watching for changes.", _provider.Name);
+            _logger.LogInformation("{Name} configuration watching for changes", _provider.Name);
         }
 
         public async Task OnChange(IEnumerable<string> paths)
         {
-            _logger.LogInformation("Changes were detected on the remote {Name} configuration provider.", _provider.Name);
+            _logger.LogInformation("Changes were detected on the remote {Name} configuration provider", _provider.Name);
 
             paths = paths.ToList();
 

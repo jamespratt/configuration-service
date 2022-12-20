@@ -23,13 +23,13 @@ namespace ConfigurationService.Client.Subscribers.Nats
 
         public void Initialize()
         {
-            _options.AsyncErrorEventHandler += (sender, args) => { _logger.LogError(args.Error); };
+            _options.AsyncErrorEventHandler += (sender, args) => { _logger.LogError("NATS replied with an error message: {Message}", args.Error); };
 
-            _options.ClosedEventHandler += (sender, args) => { _logger.LogError(args.Error, "NATS connection was closed."); };
+            _options.ClosedEventHandler += (sender, args) => { _logger.LogError(args.Error, "NATS connection was closed"); };
 
-            _options.DisconnectedEventHandler += (sender, args) => { _logger.LogError(args.Error, "NATS connection was disconnected."); };
+            _options.DisconnectedEventHandler += (sender, args) => { _logger.LogError(args.Error, "NATS connection was disconnected"); };
 
-            _options.ReconnectedEventHandler += (sender, args) => { _logger.LogInformation("NATS connection was restored."); };
+            _options.ReconnectedEventHandler += (sender, args) => { _logger.LogInformation("NATS connection was restored"); };
 
             var connectionFactory = new ConnectionFactory();
             _connection = connectionFactory.CreateConnection(_options);
@@ -37,18 +37,18 @@ namespace ConfigurationService.Client.Subscribers.Nats
 
         public void Subscribe(string subject, Action<string> handler)
         {
-            _logger.LogInformation("Subscribing to NATS subject '{subject}'.", subject);
+            _logger.LogInformation("Subscribing to NATS subject '{Subject}'", subject);
 
             _connection.SubscribeAsync(subject, (sender, args) =>
             {
-                _logger.LogInformation("Received subscription on NATS subject '{subject}'.", subject);
+                _logger.LogInformation("Received subscription on NATS subject '{Subject}'", subject);
 
                 var message = args.Message.ToString();
 
                 handler(message);
             });
 
-            _logger.LogInformation("Subscribed to NATS subject '{subject}'.", subject);
+            _logger.LogInformation("Subscribed to NATS subject '{Subject}'", subject);
         }
     }
 }

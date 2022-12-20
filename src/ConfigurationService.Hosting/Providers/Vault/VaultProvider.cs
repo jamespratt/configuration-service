@@ -73,12 +73,13 @@ namespace ConfigurationService.Hosting.Providers.Vault
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "An unhandled exception occurred while attempting to poll for changes.");
+                    _logger.LogError(ex, "An unhandled exception occurred while attempting to poll for changes");
                 }
 
                 var delayDate = DateTime.UtcNow.Add(_providerOptions.PollingInterval);
 
-                _logger.LogInformation("Next polling period will begin in {PollingInterval:c} at {delayDate}.", _providerOptions.PollingInterval, delayDate);
+                _logger.LogInformation("Next polling period will begin in {PollingInterval:c} at {DelayDate}",
+                    _providerOptions.PollingInterval, delayDate);
 
                 await Task.Delay(_providerOptions.PollingInterval, cancellationToken);
             }
@@ -86,7 +87,7 @@ namespace ConfigurationService.Hosting.Providers.Vault
 
         public void Initialize()
         {
-            _logger.LogInformation("Initializing {Name} provider with options {Options}.", Name, new
+            _logger.LogInformation("Initializing {Name} provider with options {@Options}", Name, new
             {
                 _providerOptions.ServerUri,
                 _providerOptions.Path
@@ -103,7 +104,7 @@ namespace ConfigurationService.Hosting.Providers.Vault
 
             if (secret == null)
             {
-                _logger.LogInformation("Secret does not exist at {name}.", name);
+                _logger.LogInformation("Secret does not exist at {Name}", name);
                 return null;
             }
 
@@ -121,12 +122,12 @@ namespace ConfigurationService.Hosting.Providers.Vault
 
         public async Task<IEnumerable<string>> ListPaths()
         {
-            _logger.LogInformation("Listing paths at {Path}.", _providerOptions.Path);
+            _logger.LogInformation("Listing paths at {Path}", _providerOptions.Path);
 
             var secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretPathsAsync(null, _providerOptions.Path);
             var paths = secret.Data.Keys.ToList();
 
-            _logger.LogInformation("{Count} paths found.", paths.Count);
+            _logger.LogInformation("{Count} paths found", paths.Count);
 
             return paths;
         }

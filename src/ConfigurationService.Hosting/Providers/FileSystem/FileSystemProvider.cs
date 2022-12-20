@@ -39,7 +39,7 @@ namespace ConfigurationService.Hosting.Providers.FileSystem
 
         public void Initialize()
         {
-            _logger.LogInformation("Initializing {Name} provider with options {Options}.", Name, new
+            _logger.LogInformation("Initializing {Name} provider with options {@Options}", Name, new
             {
                 _providerOptions.Path,
                 _providerOptions.SearchPattern,
@@ -74,7 +74,7 @@ namespace ConfigurationService.Hosting.Providers.FileSystem
 
             if (!File.Exists(path))
             {
-                _logger.LogInformation("File does not exist at {path}.", path);
+                _logger.LogInformation("File does not exist at {Path}", path);
                 return null;
             }
 
@@ -90,20 +90,20 @@ namespace ConfigurationService.Hosting.Providers.FileSystem
 
         public Task<IEnumerable<string>> ListPaths()
         {
-            _logger.LogInformation("Listing files at {Path}.", _providerOptions.Path);
+            _logger.LogInformation("Listing files at {Path}", _providerOptions.Path);
 
             var searchOption = _providerOptions.IncludeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
             var files = Directory.EnumerateFiles(_providerOptions.Path, _providerOptions.SearchPattern ?? "*", searchOption).ToList();
             files = files.Select(GetRelativePath).ToList();
 
-            _logger.LogInformation("{Count} files found.", files.Count);
+            _logger.LogInformation("{Count} files found", files.Count);
 
             return Task.FromResult<IEnumerable<string>>(files);
         }
 
         private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            _logger.LogInformation("Detected file change at {FullPath}.", e.FullPath);
+            _logger.LogInformation("Detected file change at {FullPath}", e.FullPath);
 
             var filename = GetRelativePath(e.FullPath);
             _onChange(new[] { filename });

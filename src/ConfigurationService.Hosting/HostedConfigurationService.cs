@@ -26,7 +26,7 @@ namespace ConfigurationService.Hosting
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Starting Configuration Service.");
+            _logger.LogInformation("Starting Configuration Service");
 
             _applicationLifetime.ApplicationStarted.Register(OnStarted);
             _applicationLifetime.ApplicationStopping.Register(OnStopping);
@@ -69,9 +69,9 @@ namespace ConfigurationService.Hosting
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unhandled exception occurred while attempting to initialize the configuration provider.");
+                _logger.LogError(ex, "An unhandled exception occurred while attempting to initialize the configuration provider");
 
-                _logger.LogInformation("The application will be terminated.");
+                _logger.LogInformation("The application will be terminated");
 
                 await StopAsync(stoppingToken);
                 _applicationLifetime.StopApplication();
@@ -101,7 +101,7 @@ namespace ConfigurationService.Hosting
 
         private void OnStarted()
         {
-            _logger.LogInformation("Configuration Service started.");
+            _logger.LogInformation("Configuration Service started");
         }
 
         private void OnStopping()
@@ -111,7 +111,7 @@ namespace ConfigurationService.Hosting
 
         private void OnStopped()
         {
-            _logger.LogInformation("Configuration Service stopped.");
+            _logger.LogInformation("Configuration Service stopped");
         }
     }
 }

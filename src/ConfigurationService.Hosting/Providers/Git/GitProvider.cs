@@ -68,7 +68,8 @@ namespace ConfigurationService.Hosting.Providers.Git
 
                 var delayDate = DateTime.UtcNow.Add(_providerOptions.PollingInterval);
 
-                _logger.LogInformation("Next polling period will begin in {PollingInterval:c} at {delayDate}.", _providerOptions.PollingInterval, delayDate);
+                _logger.LogInformation("Next polling period will begin in {PollingInterval:c} at {DelayDate}",
+                    _providerOptions.PollingInterval, delayDate);
 
                 await Task.Delay(_providerOptions.PollingInterval, cancellationToken);
             }
@@ -76,7 +77,7 @@ namespace ConfigurationService.Hosting.Providers.Git
 
         public void Initialize()
         {
-            _logger.LogInformation("Initializing {Name} provider with options {Options}.", Name, new
+            _logger.LogInformation("Initializing {Name} provider with options {@Options}", Name, new
             {
                 _providerOptions.RepositoryUrl,
                 _providerOptions.LocalPath,
@@ -87,16 +88,16 @@ namespace ConfigurationService.Hosting.Providers.Git
 
             if (Directory.Exists(_providerOptions.LocalPath))
             {
-                _logger.LogInformation("A local repository already exists at {LocalPath}.", _providerOptions.LocalPath);
+                _logger.LogInformation("A local repository already exists at {LocalPath}", _providerOptions.LocalPath);
 
-                _logger.LogInformation("Deleting directory {LocalPath}.", _providerOptions.LocalPath);
+                _logger.LogInformation("Deleting directory {LocalPath}", _providerOptions.LocalPath);
 
                 DeleteDirectory(_providerOptions.LocalPath);
             }
 
             if (!Directory.Exists(_providerOptions.LocalPath))
             {
-                _logger.LogInformation("Creating directory {LocalPath}.", _providerOptions.LocalPath);
+                _logger.LogInformation("Creating directory {LocalPath}", _providerOptions.LocalPath);
 
                 Directory.CreateDirectory(_providerOptions.LocalPath);
             }
@@ -116,16 +117,16 @@ namespace ConfigurationService.Hosting.Providers.Git
                 BranchName = _providerOptions.Branch
             };
 
-            _logger.LogInformation("Cloning git repository {RepositoryUrl} to {LocalPath}.", _providerOptions.RepositoryUrl, _providerOptions.LocalPath);
+            _logger.LogInformation("Cloning git repository {RepositoryUrl} to {LocalPath}", _providerOptions.RepositoryUrl, _providerOptions.LocalPath);
 
             var path = Repository.Clone(_providerOptions.RepositoryUrl, _providerOptions.LocalPath, cloneOptions);
 
-            _logger.LogInformation("Repository cloned to {path}.", path);
+            _logger.LogInformation("Repository cloned to {Path}", path);
 
             using var repo = new Repository(_providerOptions.LocalPath);
             var hash = repo.Head.Tip.Sha.Substring(0, 6);
 
-            _logger.LogInformation("Current HEAD is [{hash}] '{MessageShort}'.", hash, repo.Head.Tip.MessageShort);
+            _logger.LogInformation("Current HEAD is [{Hash}] '{MessageShort}'", hash, repo.Head.Tip.MessageShort);
         }
 
         public async Task<byte[]> GetConfiguration(string name)
@@ -134,7 +135,7 @@ namespace ConfigurationService.Hosting.Providers.Git
 
             if (!File.Exists(path))
             {
-                _logger.LogInformation("File does not exist at {path}.", path);
+                _logger.LogInformation("File does not exist at {Path}", path);
                 return null;
             }
 
@@ -150,13 +151,13 @@ namespace ConfigurationService.Hosting.Providers.Git
 
         public Task<IEnumerable<string>> ListPaths()
         {
-            _logger.LogInformation("Listing files at {LocalPath}.", _providerOptions.LocalPath);
+            _logger.LogInformation("Listing files at {LocalPath}", _providerOptions.LocalPath);
 
             IList<string> files = new List<string>();
 
             using (var repo = new Repository(_providerOptions.LocalPath))
             {
-                _logger.LogInformation("Listing files in repository at {LocalPath}.", _providerOptions.LocalPath);
+                _logger.LogInformation("Listing files in repository at {LocalPath}", _providerOptions.LocalPath);
 
                 foreach (var entry in repo.Index)
                 {
@@ -169,7 +170,7 @@ namespace ConfigurationService.Hosting.Providers.Git
 
             files = localFiles.Intersect(files).ToList();
 
-            _logger.LogInformation("{Count} files found.", files.Count);
+            _logger.LogInformation("{Count} files found", files.Count);
 
             return Task.FromResult<IEnumerable<string>>(files);
         }
@@ -182,25 +183,25 @@ namespace ConfigurationService.Hosting.Providers.Git
 
             using (var repo = new Repository(_providerOptions.LocalPath))
             {
-                _logger.LogInformation("Checking for remote changes on {RemoteName}.", repo.Head.TrackedBranch.RemoteName);
+                _logger.LogInformation("Checking for remote changes on {RemoteName}", repo.Head.TrackedBranch.RemoteName);
 
                 foreach (TreeEntryChanges entry in repo.Diff.Compare<TreeChanges>(repo.Head.Tip.Tree, repo.Head.TrackedBranch.Tip.Tree))
                 {
                     if (entry.Exists)
                     {
-                        _logger.LogInformation("File {Path} changed.", entry.Path);
+                        _logger.LogInformation("File {Path} changed", entry.Path);
                         changedFiles.Add(entry.Path.NormalizePathSeparators());
                     }
                     else
                     {
-                        _logger.LogInformation("File {Path} no longer exists.", entry.Path);
+                        _logger.LogInformation("File {Path} no longer exists", entry.Path);
                     }
                 }
             }
 
             if (changedFiles.Count == 0)
             {
-                _logger.LogInformation("No tree entry changes were detected.");
+                _logger.LogInformation("No tree entry changes were detected");
 
                 return changedFiles;
             }
@@ -210,7 +211,7 @@ namespace ConfigurationService.Hosting.Providers.Git
             var filteredFiles = await ListPaths();
             changedFiles = filteredFiles.Intersect(changedFiles).ToList();
 
-            _logger.LogInformation("{Count} files changed.", changedFiles.Count);
+            _logger.LogInformation("{Count} files changed", changedFiles.Count);
 
             return changedFiles;
         }
@@ -228,19 +229,19 @@ namespace ConfigurationService.Hosting.Providers.Git
 
             var signature = new Signature(new Identity("Configuration Service", "Configuration Service"), DateTimeOffset.Now);
 
-            _logger.LogInformation("Pulling changes to local repository.");
+            _logger.LogInformation("Pulling changes to local repository");
 
             var currentHash = repo.Head.Tip.Sha.Substring(0, 6);
 
-            _logger.LogInformation("Current HEAD is [{currentHash}] '{MessageShort}'.", currentHash, repo.Head.Tip.MessageShort);
+            _logger.LogInformation("Current HEAD is [{CurrentHash}] '{MessageShort}'", currentHash, repo.Head.Tip.MessageShort);
 
             var result = Commands.Pull(repo, signature, options);
 
-            _logger.LogInformation("Merge completed with status {Status}.", result.Status);
+            _logger.LogInformation("Merge completed with status {Status}", result.Status);
 
             var newHash = result.Commit.Sha.Substring(0, 6);
 
-            _logger.LogInformation("New HEAD is [{newHash}] '{MessageShort}'.", newHash, result.Commit.MessageShort);
+            _logger.LogInformation("New HEAD is [{NewHash}] '{MessageShort}'", newHash, result.Commit.MessageShort);
         }
 
         private static void DeleteDirectory(string path)
@@ -275,7 +276,7 @@ namespace ConfigurationService.Hosting.Providers.Git
             {
                 var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
 
-                _logger.LogInformation("Fetching from remote {Name} at {Url}.", remote.Name, remote.Url);
+                _logger.LogInformation("Fetching from remote {Name} at {Url}", remote.Name, remote.Url);
 
                 Commands.Fetch(repo, remote.Name, refSpecs, options, string.Empty);
             }

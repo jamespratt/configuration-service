@@ -30,24 +30,24 @@ namespace ConfigurationService.Hosting.Publishers.Redis
                 _logger.LogDebug(writer.ToString());
             }
 
-            _connection.ErrorMessage += (sender, args) => { _logger.LogError(args.Message); };
+            _connection.ErrorMessage += (sender, args) => { _logger.LogError("Redis replied with an error message: {Message}", args.Message); };
 
-            _connection.ConnectionFailed += (sender, args) => { _logger.LogError(args.Exception, "Redis connection failed."); };
+            _connection.ConnectionFailed += (sender, args) => { _logger.LogError(args.Exception, "Redis connection failed"); };
 
-            _connection.ConnectionRestored += (sender, args) => { _logger.LogInformation("Redis connection restored."); };
+            _connection.ConnectionRestored += (sender, args) => { _logger.LogInformation("Redis connection restored"); };
 
-            _logger.LogInformation("Redis publisher initialized.");
+            _logger.LogInformation("Redis publisher initialized");
         }
 
         public async Task Publish(string channel, string message)
         {
-            _logger.LogInformation("Publishing message to channel {channel}.", channel);
+            _logger.LogInformation("Publishing message to channel {Channel}", channel);
 
             var publisher = _connection.GetSubscriber();
 
             var clientCount = await publisher.PublishAsync(channel, message);
 
-            _logger.LogInformation("Message to channel {channel} was received by {clientCount} clients.", channel, clientCount);
+            _logger.LogInformation("Message to channel {Channel} was received by {ClientCount} clients", channel, clientCount);
         }
     }
 }

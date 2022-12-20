@@ -22,23 +22,23 @@ namespace ConfigurationService.Hosting.Publishers.Nats
 
         public void Initialize()
         {
-            _options.AsyncErrorEventHandler += (sender, args) => { _logger.LogError(args.Error); };
+            _options.AsyncErrorEventHandler += (sender, args) => { _logger.LogError("NATS replied with an error message: {Message}", args.Error); };
 
-            _options.ClosedEventHandler += (sender, args) => { _logger.LogError(args.Error, "NATS connection was closed."); };
+            _options.ClosedEventHandler += (sender, args) => { _logger.LogError(args.Error, "NATS connection was closed"); };
 
-            _options.DisconnectedEventHandler += (sender, args) => { _logger.LogError(args.Error, "NATS connection was disconnected."); };
+            _options.DisconnectedEventHandler += (sender, args) => { _logger.LogError(args.Error, "NATS connection was disconnected"); };
 
-            _options.ReconnectedEventHandler += (sender, args) => { _logger.LogInformation("NATS connection was restored."); };
+            _options.ReconnectedEventHandler += (sender, args) => { _logger.LogInformation("NATS connection was restored"); };
 
             var connectionFactory = new ConnectionFactory();
             _connection = connectionFactory.CreateConnection(_options);
 
-            _logger.LogInformation("NATS publisher initialized.");
+            _logger.LogInformation("NATS publisher initialized");
         }
 
         public Task Publish(string subject, string message)
         {
-            _logger.LogInformation("Publishing message to NATS with subject {subject}.", subject);
+            _logger.LogInformation("Publishing message to NATS with subject {Subject}", subject);
 
             var data = Encoding.UTF8.GetBytes(message);
 

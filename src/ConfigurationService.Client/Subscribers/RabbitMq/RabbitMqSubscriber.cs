@@ -38,20 +38,20 @@ namespace ConfigurationService.Client.Subscribers.RabbitMq
             var connection = factory.CreateConnection();
             _channel = connection.CreateModel();
 
-            connection.CallbackException += (sender, args) => { _logger.LogError(args.Exception, "RabbitMQ callback exception."); };
+            connection.CallbackException += (sender, args) => { _logger.LogError(args.Exception, "RabbitMQ callback exception"); };
 
             connection.ConnectionBlocked += (sender, args) => { _logger.LogError("RabbitMQ connection is blocked. Reason: {Reason}", args.Reason); };
 
             connection.ConnectionShutdown += (sender, args) => { _logger.LogError("RabbitMQ connection was shut down. Reason: {ReplyText}", args.ReplyText); };
 
-            connection.ConnectionUnblocked += (sender, args) => { _logger.LogInformation("RabbitMQ connection was unblocked."); };
+            connection.ConnectionUnblocked += (sender, args) => { _logger.LogInformation("RabbitMQ connection was unblocked"); };
 
             _channel.ExchangeDeclare(_exchangeName, ExchangeType.Fanout);
         }
 
         public void Subscribe(string routingKey, Action<string> handler)
         {
-            _logger.LogInformation("Binding to RabbitMQ queue with routing key '{routingKey}'.", routingKey);
+            _logger.LogInformation("Binding to RabbitMQ queue with routing key '{RoutingKey}'", routingKey);
 
             var queueName = _channel.QueueDeclare().QueueName;
             _channel.QueueBind(queueName, _exchangeName, routingKey);
@@ -60,7 +60,7 @@ namespace ConfigurationService.Client.Subscribers.RabbitMq
 
             consumer.Received += (model, args) =>
             {
-                _logger.LogInformation("Received message with routing key '{RoutingKey}'.", args.RoutingKey);
+                _logger.LogInformation("Received message with routing key '{RoutingKey}'", args.RoutingKey);
 
                 var body = args.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
@@ -70,7 +70,7 @@ namespace ConfigurationService.Client.Subscribers.RabbitMq
 
             var consumerTag = _channel.BasicConsume(queueName, true, consumer);
 
-            _logger.LogInformation("Consuming RabbitMQ queue {queueName} for consumer '{consumerTag}'.", queueName, consumerTag);
+            _logger.LogInformation("Consuming RabbitMQ queue {QueueName} for consumer '{ConsumerTag}'", queueName, consumerTag);
         }
     }
 }

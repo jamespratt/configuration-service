@@ -44,28 +44,28 @@ namespace ConfigurationService.Client.Subscribers.Redis
                 _logger.LogDebug(writer.ToString());
             }
 
-            _connection.ErrorMessage += (sender, args) => { _logger.LogError(args.Message); };
+            _connection.ErrorMessage += (sender, args) => { _logger.LogError("Redis replied with an error message: {Message}", args.Message); };
 
-            _connection.ConnectionFailed += (sender, args) => { _logger.LogError(args.Exception, "Redis connection failed."); };
+            _connection.ConnectionFailed += (sender, args) => { _logger.LogError(args.Exception, "Redis connection failed"); };
 
-            _connection.ConnectionRestored += (sender, args) => { _logger.LogInformation("Redis connection restored."); };
+            _connection.ConnectionRestored += (sender, args) => { _logger.LogInformation("Redis connection restored"); };
         }
 
         public void Subscribe(string channel, Action<string> handler)
         {
-            _logger.LogInformation("Subscribing to Redis channel '{channel}'.", channel);
+            _logger.LogInformation("Subscribing to Redis channel '{Channel}'", channel);
 
             var subscriber = _connection.GetSubscriber();
 
             subscriber.Subscribe(channel, (redisChannel, value) =>
             {
-                _logger.LogInformation("Received subscription on Redis channel '{channel}'.", channel);
+                _logger.LogInformation("Received subscription on Redis channel '{Channel}'", channel);
 
                 handler(value);
             });
 
             var endpoint = subscriber.SubscribedEndpoint(channel);
-            _logger.LogInformation("Subscribed to Redis endpoint {endpoint} for channel '{channel}'.", endpoint, channel);
+            _logger.LogInformation("Subscribed to Redis endpoint {Endpoint} for channel '{Channel}'", endpoint, channel);
         }
     }
 }
