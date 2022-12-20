@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using System.Threading.Tasks;
 using ConfigurationService.Client.Parsers;
-using ConfigurationService.Hosting;
-using ConfigurationService.Hosting.Providers;
-using ConfigurationService.Hosting.Publishers;
-using Microsoft.Extensions.Logging;
-using NSubstitute;
-using NSubstitute.Extensions;
 using Xunit;
 
 namespace ConfigurationService.Test
