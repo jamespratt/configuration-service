@@ -1,14 +1,13 @@
-﻿using System;
+﻿using ConfigurationService.Hosting.Extensions;
+using LibGit2Sharp;
+using LibGit2Sharp.Handlers;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ConfigurationService.Hosting.Extensions;
-
-using LibGit2Sharp;
-using LibGit2Sharp.Handlers;
-using Microsoft.Extensions.Logging;
 
 namespace ConfigurationService.Hosting.Providers.Git;
 
@@ -131,6 +130,16 @@ public class GitProvider : IProvider
 
     public async Task<byte[]> GetConfiguration(string name)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            return null;
+        }
+
+        if (name.StartsWith('/'))
+        {
+            name = name.Substring(1);
+        }
+
         string path = Path.Combine(_providerOptions.LocalPath, name);
 
         if (!File.Exists(path))
