@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
-using System.Text.Json;
-using ConfigurationService.Hosting.Providers;
+﻿using ConfigurationService.Hosting.Providers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Text;
+using System.Text.Json;
 
 namespace ConfigurationService.Hosting;
 
@@ -58,16 +58,16 @@ public static class ConfigurationEndpointRouteBuilderExtensions
     {
         var provider = endpointRouteBuilder.ServiceProvider.GetService<IProvider>();
 
-        return endpointRouteBuilder.MapGet(pattern + "/{name}", async context =>
+        return endpointRouteBuilder.MapGet(pattern + "/{*name}", async context =>
         {
-            var name = context.GetRouteValue("name")?.ToString();
+            var name = context.Request.Path.ToString().Substring(pattern.Length);
             name = WebUtility.UrlDecode(name);
 
             var bytes = await provider.GetConfiguration(name);
 
             if (bytes == null)
             {
-                context.Response.StatusCode = 404;
+                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return;
             }
 
