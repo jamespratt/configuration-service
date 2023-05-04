@@ -14,9 +14,9 @@ public class VaultProviderOptions
     public string ServerUri { get; set; }
 
     /// <summary>
-    /// The path where the kv secrets engine is enabled.
+    /// The MountPoint where the kv secrets engine is enabled.
     /// </summary>
-    public string Path { get; set; }
+    public string MountPoint { get; set; }
 
     /// <summary>
     /// The auth method to be used to acquire a vault token.
