@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using VaultSharp;
 
 namespace ConfigurationService.Hosting.Providers.Vault;
@@ -31,9 +33,9 @@ public class VaultProvider : IProvider
             throw new ProviderOptionNullException(nameof(_providerOptions.ServerUri));
         }
 
-        if (string.IsNullOrWhiteSpace(_providerOptions.Path))
+        if (string.IsNullOrWhiteSpace(_providerOptions.MountPoint))
         {
-            throw new ProviderOptionNullException(nameof(_providerOptions.Path));
+            throw new ProviderOptionNullException(nameof(_providerOptions.MountPoint));
         }
 
         if (_providerOptions.AuthMethodInfo == null)
@@ -54,7 +56,7 @@ public class VaultProvider : IProvider
 
                 foreach (var path in paths)
                 {
-                    var metadata = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretMetadataAsync(path, _providerOptions.Path);
+                    var metadata = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretMetadataAsync(path, _providerOptions.MountPoint);
 
                     _secretVersions.TryGetValue(path, out int version);
 
@@ -90,7 +92,7 @@ public class VaultProvider : IProvider
         _logger.LogInformation("Initializing {Name} provider with options {@Options}", Name, new
         {
             _providerOptions.ServerUri,
-            _providerOptions.Path
+            _providerOptions.MountPoint
         });
 
         var vaultClientSettings = new VaultClientSettings(_providerOptions.ServerUri, _providerOptions.AuthMethodInfo);
@@ -100,7 +102,7 @@ public class VaultProvider : IProvider
 
     public async Task<byte[]> GetConfiguration(string name)
     {
-        var secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(name, null, _providerOptions.Path);
+        var secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(name, null, _providerOptions.MountPoint);
 
         if (secret == null)
         {
@@ -109,7 +111,15 @@ public class VaultProvider : IProvider
         }
 
         await using var stream = new MemoryStream();
-        await JsonSerializer.SerializeAsync(stream, secret.Data.Data);
+        dynamic jsonObject = new ExpandoObject();
+
+        foreach (var key in secret.Data.Data.Keys)
+            if (secret.Data.Data[key] is JToken)
+                ((IDictionary<string, object>)jsonObject).Add(key, JsonSerializer.Deserialize<object>((secret.Data.Data[key] as JToken).ToString()));
+            else
+                ((IDictionary<string, object>)jsonObject).Add(key, secret.Data.Data[key]);
+        
+        await JsonSerializer.SerializeAsync(stream, jsonObject);
         return stream.ToArray();
     }
 
@@ -122,9 +132,9 @@ public class VaultProvider : IProvider
 
     public async Task<IEnumerable<string>> ListPaths()
     {
-        _logger.LogInformation("Listing paths at {Path}", _providerOptions.Path);
+        _logger.LogInformation("Listing paths at {Path}", _providerOptions.MountPoint);
 
-        var secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretPathsAsync(null, _providerOptions.Path);
+        var secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretPathsAsync("/", _providerOptions.MountPoint);
         var paths = secret.Data.Keys.ToList();
 
         _logger.LogInformation("{Count} paths found", paths.Count);
