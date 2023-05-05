@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using VaultSharp;
 
 namespace ConfigurationService.Hosting.Providers.Vault;
@@ -109,7 +111,15 @@ public class VaultProvider : IProvider
         }
 
         await using var stream = new MemoryStream();
-        await JsonSerializer.SerializeAsync(stream, secret.Data.Data);
+        dynamic jsonObject = new ExpandoObject();
+
+        foreach (var key in secret.Data.Data.Keys)
+            if (secret.Data.Data[key] is JToken)
+                ((IDictionary<string, object>)jsonObject).Add(key, JsonSerializer.Deserialize<object>((secret.Data.Data[key] as JToken).ToString()));
+            else
+                ((IDictionary<string, object>)jsonObject).Add(key, secret.Data.Data[key]);
+        
+        await JsonSerializer.SerializeAsync(stream, jsonObject);
         return stream.ToArray();
     }
 
